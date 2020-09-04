@@ -1,0 +1,111 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rdwApiSubscriptionKey": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "servicePrincipalPasswordEventGridValue": {
+            "type": "securestring",
+            "defaultValue": ""
+        },
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2016-10-01",
+            "name": "[parameters('full').keyVault.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[parameters('full').keyVault.adminObjectId]",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "certificates": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore",
+                                "ManageContacts",
+                                "ManageIssuers",
+                                "GetIssuers",
+                                "ListIssuers",
+                                "SetIssuers",
+                                "DeleteIssuers"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": true,
+                "enableSoftDelete": true
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2016-10-01",
+            "name": "[concat(parameters('full').keyVault.name, '/', parameters('full').keyVault.secrets.rdwApiSubscriptionKey)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('full').keyVault.name)]"
+            ],
+            "properties": {
+                "value": "[parameters('rdwApiSubscriptionKey')]",
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2016-10-01",
+            "name": "[concat(parameters('full').keyVault.name, '/', parameters('full').keyVault.secrets.servicePrincipalPasswordEventGrid)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('full').keyVault.name)]"
+            ],
+            "properties": {
+                "value": "[parameters('servicePrincipalPasswordEventGridValue')]",
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "resources": [
+        {
+            "type": "microsoft.insights/components",
+            "apiVersion": "2018-05-01-preview",
+            "name": "[parameters('full').applicationInsights.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web",
+                "Flow_Type": "Redfield",
+                "Request_Source": "IbizaAIExtension",
+                "RetentionInDays": 90,
+                "publicNetworkAccessForIngestion": "Enabled",
+                "publicNetworkAccessForQuery": "Enabled"
+            }
+        }
+    ]
+}

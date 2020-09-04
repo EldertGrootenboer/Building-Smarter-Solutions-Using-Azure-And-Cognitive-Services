@@ -1,0 +1,234 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service/apis",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name)]",
+            "properties": {
+                "displayName": "[parameters('full').apiManagement.apis.face.displayName]",
+                "subscriptionRequired": true,
+                "serviceUrl": "[parameters('full').apiManagement.apis.face.serviceUrl]",
+                "path": "[parameters('full').apiManagement.apis.face.name]",
+                "protocols": [
+                    "https"
+                ],
+                "isCurrent": true
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name, '/', parameters('full').apiManagement.apis.face.operations.identify.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+            ],
+            "properties": {
+                "displayName": "Face - Identify",
+                "method": "POST",
+                "urlTemplate": "[parameters('full').apiManagement.apis.face.operations.identify.urlTemplate]",
+                "templateParameters": [
+                ],
+                "request": {
+                    "queryParameters": [],
+                    "headers": [],
+                    "representations": [
+                        {
+                            "contentType": "application/json",
+                            "sample": "{\n    \"personGroupId\": \"visitors\",\n    \"faceIds\": [\n        \"c5c24a82-6845-4031-9d5d-978df9175426\",\n        \"65d083d4-9447-47d1-af30-b626144bf0fb\"\n    ],\n    \"maxNumOfCandidatesReturned\": 1,\n    \"confidenceThreshold\": 0.5\n}",
+                            "typeName": "Body"
+                        }
+                    ]
+                },
+                "responses": [
+                    {
+                        "statusCode": 200,
+                        "description": "A successful call returns the identified candidate person(s) for each query face.\n<br/><br/> JSON fields in response body:\n<table class=\"element table\">\n<thead>\n<tr><th>Fields</th><th>Type</th><th>Description</th></tr>\n</thead>\n<tbody>\n<tr><td>faceId</td><th>String</th><td>faceId of the query face.</td></tr>\n<tr><td>candidates</td><th>Array</th><td>Identified person candidates for that face (ranked by confidence). Array size should be no larger than input maxNumOfCandidatesReturned. If no person is identified, will return an empty array. </td></tr>\n<tr><td>personId</td><th>String</th><td>personId of candidate person.</td></tr>\n<tr><td>confidence</td><th>Number</th><td>A float number between 0.0 and 1.0.</td></tr>\n</tbody>\n</table>\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "[[\n    {\n        \"faceId\": \"c5c24a82-6845-4031-9d5d-978df9175426\",\n        \"candidates\": [\n            {\n                \"personId\": \"25985303-c537-4467-b41d-bdb45cd95ca1\",\n                \"confidence\": 0.92\n            }\n        ]\n    },\n    {\n        \"faceId\": \"65d083d4-9447-47d1-af30-b626144bf0fb\",\n        \"candidates\": [\n            {\n                \"personId\": \"2ae4935b-9659-44c3-977f-61fac20d0538\",\n                \"confidence\": 0.89\n            }\n        ]\n    }\n]"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 400,
+                        "description": "Error code and message returned in JSON:\n<table class=\"element table\">\n<thead>\n<tr><th>Error Code</th><th>Error Message Description</th></tr>\n</thead>\n<tbody>\n<tr><td>BadArgument</td><td>Invalid request body.</td></tr>\n<tr><td>BadArgument</td><td>The argument maxNumOfCandidatesReturned is not valid. Range is [1,5]</td></tr>\n<tr><td>BadArgument</td><td>The argument confidenceThreshold is not valid. Range is [0, 1]</td></tr>\n<tr><td>BadArgument</td><td>Face ID is invalid.</td></tr>\n<tr><td>BadArgument</td><td>Person group ID is invalid. Valid format should be a string composed by numbers, English letters in lower case, '-', '_', and no longer than 64 characters.</td></tr>\n<tr><td>BadArgument</td><td>Large person group ID is invalid. Valid format should be a string composed by numbers, English letters in lower case, '-', '_', and no longer than 64 characters.</td></tr>\n<tr><td>BadArgument</td><td>'recognitionModel' is incompatible.</td></tr>\n<tr><td>PersonGroupIdAndLargePersonGroupIdBothNotNull</td><td>Large person group ID and person group ID are both not null.</td></tr>\n<tr><td>PersonGroupIdAndLargePersonGroupIdBothNull</td><td>Large person group ID and person group ID are both null.</td></tr>\n<tr><td>PersonGroupNotFound</td><td>Person group is not found.</td></tr>\n<tr><td>LargePersonGroupNotFound</td><td>Large person group is not found.</td></tr>\n<tr><td>FaceNotFound</td><td>Face is not found.</td></tr>\n<tr><td>PersonGroupNotTrained</td><td>Person group not trained.</td></tr>\n<tr><td>LargePersonGroupNotTrained</td><td>Large person group not trained.</td></tr>\n<tr><td>PersonGroupTrainingNotFinished</td><td>Person group is under training.</td></tr>\n<tr><td>LargePersonGroupTrainingNotFinished</td><td>Large person group is under training.</td></tr>\n</tbody>\n</table>",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"BadArgument\",\r\n    \"message\": \"Large Person group is invalid.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 401,
+                        "description": "Error code and message returned in JSON:\n<table class=\"element table\">\n<thead>\n<tr><th>Error Code</th><th>Error Message Description</th></tr>\n</thead>\n<tbody>\n<tr><td>Unspecified</td><td>Invalid subscription Key or user/plan is blocked.</td></tr>\n</tbody>\n</table>\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"Unspecified\",\r\n    \"message\": \"Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 403,
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"statusCode\": 403,\r\n    \"message\": \"Out of call volume quota. Quota will be replenished in 2 days.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 409,
+                        "description": "Training process is conflict with identify. Try identify again when training is finished.\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"LargePersonGroupTrainingNotFinished\",\r\n    \"message\": \"Large person group is under training.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 415,
+                        "description": "Unsupported media type error. Only \"application/json\" is valid for this API.\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"BadArgument\",\r\n    \"message\": \"Invalid Media Type.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 429,
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"statusCode\": 429,\r\n    \"message\": \"Rate limit is exceeded. Try again in 26 seconds.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name, '/', parameters('full').apiManagement.apis.face.operations.train.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+            ],
+            "properties": {
+                "displayName": "PersonGroup - Train",
+                "method": "POST",
+                "urlTemplate": "[parameters('full').apiManagement.apis.face.operations.train.urlTemplate]",
+                "templateParameters": [
+                    {
+                        "name": "personGroupId",
+                        "description": "Target person group to be trained.",
+                        "type": "string",
+                        "required": true,
+                        "values": []
+                    }
+                ],
+                "request": {
+                },
+                "responses": [
+                    {
+                        "statusCode": 202,
+                        "description": "\nA successful call returns an empty JSON body.\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 401,
+                        "description": "\nError code and message returned in JSON:\n<table class=\"element table\">\n<thead>\n<tr><th>Error Code</th><th>Error Message Description</th></tr>\n</thead>\n<tbody>\n<tr><td>Unspecified</td><td>Invalid subscription Key or user/plan is blocked.</td></tr>\n</tbody>\n</table>\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"Unspecified\",\r\n    \"message\": \"Access denied due to invalid subscription key. Make sure you are subscribed to an API you are trying to call and provide the right key.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 403,
+                        "description": "",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"statusCode\": 403,\r\n    \"message\": \"Out of call volume quota. Quota will be replenished in 2 days.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 404,
+                        "description": "\nError code and message returned in JSON:\n<table class=\"element table\">\n<thead>\n<tr><th>Error Code</th><th>Error Message Description</th></tr>\n</thead>\n<tbody>\n<tr><td>PersonGroupNotFound</td><td>Person group ID is invalid. Valid format should be a string composed by numbers, English letters in lower case, '-', '_', and no longer than 64 characters.</td></tr>\n<tr><td>PersonGroupNotFound</td><td>Person group is not found.</td></tr>\n</tbody>\n</table>\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"PersonGroupNotFound\",\r\n    \"message\": \"Person group is not found.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 409,
+                        "description": "\nError code and message returned in JSON:\n<table class=\"element table\">\n<thead>\n<tr><th>Error Code</th><th>Error Message Description</th></tr>\n</thead>\n<tbody>\n<tr><td>PersonGroupTrainingNotFinished</td><td>Person group is under training.</td></tr>\n<tr><td>ConcurrentOperationConflict</td><td>Concurrent operation conflict on requested resource.</td></tr>\n</tbody>\n</table>\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"code\": \"PersonGroupTrainingNotFinished\",\r\n    \"message\": \"Person group is under training.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 429,
+                        "description": "",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{\r\n  \"error\": {\r\n    \"statusCode\": 429,\r\n    \"message\": \"Rate limit is exceeded. Try again in 26 seconds.\"\r\n  }\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', parameters('full').keyVault.name, '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.faceApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"faceApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"faceApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "rawxml"
+            }
+        }
+    ]
+}

@@ -1,0 +1,237 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "value": {
+                "apiManagement": {
+                    "apis": {
+                        "face": {
+                            "displayName": "Face",
+                            "name": "face",
+                            "operations": {
+                                "identify": {
+                                    "name": "identify",
+                                    "urlTemplate": "/identify"
+                                },
+                                "train": {
+                                    "name": "train",
+                                    "urlTemplate": "/persongroups/{personGroupId}/train"
+                                }
+                            },
+                            "serviceUrl": "https://westeurope.api.cognitive.microsoft.com/face/v1.0"
+                        },
+                        "formRecognizer": {
+                            "displayName": "Form Recognizer",
+                            "name": "form-recognizer",
+                            "operations": {
+                                "analyzeForm": {
+                                    "name": "analyzeForm",
+                                    "urlTemplate": "/custom/models/{modelId}/analyze"
+                                },
+                                "analyzeFormResults": {
+                                    "name": "analyzeFormResults",
+                                    "urlTemplate": "/custom/models/{modelId}/analyzeResults/{resultId}"
+                                },
+                                "listCustomModels": {
+                                    "name": "listCustomModels",
+                                    "urlTemplate": "/custom/models"
+                                }
+                            },
+                            "serviceUrl": "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.0"
+                        },
+                        "rdw": {
+                            "displayName": "RDW",
+                            "name": "rdw",
+                            "operations": {
+                                "fuelTypes": {
+                                    "name": "fuelTypes",
+                                    "path": "/fuel",
+                                    "urlTemplate": "/fuel?kenteken={licensePlateNumber}"
+                                },
+                                "licensedCars": {
+                                    "name": "licensedCars",
+                                    "path": "/licensed",
+                                    "urlTemplate": "/licensed?kenteken={licensePlateNumber}"
+                                }
+                            },
+                            "serviceUrl": "https://opendata.rdw.nl/resource"
+                        },
+                        "translator": {
+                            "displayName": "Translator",
+                            "name": "translator",
+                            "operations": {
+                                "translate": {
+                                    "name": "translate",
+                                    "urlTemplate": "/translate"
+                                }
+                            },
+                            "serviceUrl": "https://api.cognitive.microsofttranslator.com"
+                        },
+                        "visitors": {
+                            "displayName": "Visitors",
+                            "name": "visitors",
+                            "operations": {
+                                "create": {
+                                    "name": "create",
+                                    "urlTemplate": "/create"
+                                }
+                            },
+                            "serviceUrl": ""
+                        }
+                    },
+                    "name": "apim-smarter-solutions-using-cognitive-services",
+                    "publisherEmail": "eldert@eldert.net",
+                    "publisherName": "EPH",
+                    "sku": "Developer",
+                    "subscriptions": {
+                        "azurePlatform": "building-smarter-solutions-using-cognitive-services"
+                    }
+                },
+                "appServices": {
+                    "bot": {
+                        "appServicePlan": "asp-bot-smarter-solutions-cognitive-services",
+                        "microsoftAppId": "784a6d8e-cb98-472e-af3d-6c29b74601f1",
+                        "name": "bot-smarter-solutions-cognitive-services"
+                    }
+                },
+                "applicationInsights": {
+                    "name": "ai-building-smarter-solutions-using-cognitive-services"
+                },
+                "cognitiveServices": {
+                    "computerVision": {
+                        "name": "cv-building-smarter-solutions-using-cognitive-services",
+                        "siteUrl": "https://westus.api.cognitive.microsoft.com",
+                        "sku": "S1"
+                    },
+                    "face": {
+                        "name": "face-building-smarter-solutions-using-cognitive-services",
+                        "personGroupVisitors": "visitors",
+                        "siteUrl": "https://westus.api.cognitive.microsoft.com",
+                        "sku": "S0"
+                    },
+                    "formRecognizer": {
+                        "name": "fr-building-smarter-solutions-using-cognitive-services",
+                        "siteUrl": "https://westus.api.cognitive.microsoft.com",
+                        "sku": "S0"
+                    },
+                    "luis": {
+                        "name": "luis-building-smarter-solutions-using-cognitive-services",
+                        "sku": "S0"
+                    },
+                    "translator": {
+                        "name": "tl-building-smarter-solutions-using-cognitive-services",
+                        "sku": "S1"
+                    }
+                },
+                "commonDataService": {
+                    "entities": {
+                        "ships": {
+                            "fields": {
+                                "email": "cr105_email",
+                                "shipName": "cr105_shipname"
+                            },
+                            "name": "cr105_ships"
+                        },
+                        "visitors": {
+                            "fields": {
+                                "faceApiPersonId": "new_faceapipersonid",
+                                "name": "cr105_name",
+                                "securityCourseDone": "cr105_securitycoursedone",
+                                "visitorId": "cr105_visitorid",
+                                "visits": "cr105_visits"
+                            },
+                            "name": "cr105_visitors"
+                        }
+                    },
+                    "organization": "orgf2413272.crm4"
+                },
+                "eventGrid": {
+                    "servicePrincipal": {
+                        "clientId": "3b919c41-2248-4af7-9ccd-b065131e0049"
+                    }
+                },
+                "functionApps": {
+                    "licensePlateRecognizer": {
+                        "appServicePlan": "asp-license-plate-recognizer",
+                        "function": "LicensePlateRecognizer",
+                        "name": "fa-license-plate-recognizer"
+                    },
+                    "retrieveLatestModel": {
+                        "appServicePlan": "asp-retrieve-latest-model",
+                        "function": "RetrieveLatestModel",
+                        "name": "fa-retrieve-latest-model"
+                    }
+                },
+                "general": {
+                    "location": "westeurope",
+                    "tags": {
+                        "CreationDate": "06-08-2020",
+                        "Project": "Building Smarter Solutions Using Azure and Cognitive Services",
+                        "Purpose": "Session"
+                    }
+                },
+                "keyVault": {
+                    "adminObjectId": "2fe35e55-b3ac-4c86-a18f-97ef0dc4615d",
+                    "name": "kv-cognitive-services",
+                    "secrets": {
+                        "faceApiSubscriptionKey": "faceApiSubscriptionKey",
+                        "formApiRecognizerSubscriptionKey": "formApiRecognizerSubscriptionKey",
+                        "rdwApiSubscriptionKey": "rdwApiSubscriptionKey",
+                        "servicePrincipalPasswordEventGrid": "servicePrincipalPasswordEventGrid",
+                        "translatorApiSubscriptionKey": "translatorApiSubscriptionKey"
+                    }
+                },
+                "logAnalytics": {
+                    "name": "loga-building-smarter-solutions-using-cognitive-services",
+                    "sku": "free"
+                },
+                "logicApps": {
+                    "apiConnections": {
+                        "azureblob": "azureblob",
+                        "azureeventgrid": "azureeventgrid",
+                        "cognitiveservicescomputervision": "cognitiveservicescomputervision",
+                        "commondataservice": "commondataservice",
+                        "faceapi": "faceapi",
+                        "formrecognizer": "formrecognizer",
+                        "office365": "office365",
+                        "servicebus": "servicebus"
+                    },
+                    "processCarCamera": {
+                        "name": "la-process-car-camera"
+                    },
+                    "processGateCamera": {
+                        "name": "la-process-gate-camera"
+                    },
+                    "processVisitorPictures": {
+                        "name": "la-process-visitor-pictures"
+                    },
+                    "processWorksheets": {
+                        "name": "la-process-worksheets"
+                    },
+                    "registerVisitor": {
+                        "name": "la-register-visitor"
+                    }
+                },
+                "serviceBus": {
+                    "name": "sb-smarter-solutions-using-cognitive-services",
+                    "queues": {
+                        "carCamera": "car-camera",
+                        "departureCamera": "departure-camera",
+                        "gateCamera": "gate-camera"
+                    },
+                    "sku": "Standard"
+                },
+                "storageAccount": {
+                    "containers": {
+                        "carCamera": "carcamera",
+                        "departureCamera": "departurecamera",
+                        "gateCamera": "gatecamera",
+                        "visitorPictures": "visitorpictures"
+                    },
+                    "name": "sasmartercognitive"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,291 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rdwApiSubscriptionKey": {
+            "type": "securestring"
+        },
+        "servicePrincipalPasswordEventGridValue": {
+            "type": "securestring"
+        },
+        "full": {
+            "type": "object"
+        },
+        "templatesBaseUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Sessions/master/Building%20Smarter%20Solutions%20Using%20Azure%20and%20Cognitive%20Services/Code/IaC"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "keyVault",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Security/key-vault.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "rdwApiSubscriptionKey": {
+                        "value": "[parameters('rdwApiSubscriptionKey')]"
+                    },
+                    "servicePrincipalPasswordEventGridValue": {
+                        "value": "[parameters('servicePrincipalPasswordEventGridValue')]"
+                    },
+                    "full": {
+                        "value": "[parameters('full')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "logAnalytics",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Monitoring/log-analytics.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "applicationInsights",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Monitoring/application-insights.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "storageAccount",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Storage & Messaging/storage-account.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "serviceBus",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Storage & Messaging/service-bus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiManagement",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]",
+                "[resourceId('Microsoft.Resources/deployments', 'keyVault')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/API Management/api-management.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiManagementApiFace",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiManagement')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/API Management/api-management-api-face.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiManagementApiFormRecognizer",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiManagement')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/API Management/api-management-api-form-recognizer.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiManagementApiRdw",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiManagement')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/API Management/api-management-api-rdw.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "functionAppLicensePlateRecognizer",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]",
+                "[resourceId('Microsoft.Resources/deployments', 'storageAccount')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/App Service & Functions/function-app-license-plate-recognizer.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "functionAppRetrieveLatestModel",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]",
+                "[resourceId('Microsoft.Resources/deployments', 'storageAccount')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiManagement')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/App Service & Functions/function-app-retrieve-latest-model.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "cognitiveServiceComputerVision",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Cognitive Services/computer-vision.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "cognitiveServiceFace",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Cognitive Services/face.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "cognitiveServiceFormRecognizer",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Cognitive Services/form-recognizer.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "cognitiveServiceLuis",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Cognitive Services/luis.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ]
+}

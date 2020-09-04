@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "resources": [
+        {
+            "type": "microsoft.operationalinsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[parameters('full').logAnalytics.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('full').logAnalytics.sku]"
+                },
+                "retentionInDays": 7
+            }
+        },
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[concat('LogicAppsManagement(', parameters('full').logAnalytics.name, ')')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('microsoft.operationalinsights/workspaces', parameters('full').logAnalytics.name)]"
+            ],
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('full').logAnalytics.name)]"
+            },
+            "plan": {
+                "name": "[concat('LogicAppsManagement(', parameters('full').logAnalytics.name, ')')]",
+                "product": "OMSGallery/LogicAppsManagement",
+                "promotionCode": "",
+                "publisher": "Microsoft"
+            }
+        }
+    ]
+}

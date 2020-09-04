@@ -1,0 +1,268 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "templatesBaseUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Sessions/master/Building%20Smarter%20Solutions%20Using%20Azure%20and%20Cognitive%20Services/Code/IaC"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiManagementApiVisitors",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'logicAppRegisterVisitor')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/API Management/api-management-api-visitors.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionAzureBlob",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/azureblob.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionEventGrid",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/azureeventgrid.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionComputerVision",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/cognitiveservicescomputervision.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionCommonDataService",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/commondataservice.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionFaceApi",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/faceapi.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionFormRecognizer",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/formrecognizer.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionOffice365",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/office365.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "apiConnectionServiceBus",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/servicebus.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "logicAppProcessCarCamera",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionAzureBlob')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionEventGrid')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionComputerVision')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionServiceBus')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-car-camera.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "logicAppProcessGateCamera",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionAzureBlob')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionEventGrid')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionCommonDataService')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionFaceApi')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionServiceBus')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-gate-camera.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "logicAppProcessVisitorPictures",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionAzureBlob')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionEventGrid')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionCommonDataService')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionFaceApi')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-visitor-pictures.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "logicAppProcessWorksheets",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionAzureBlob')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionEventGrid')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionServiceBus')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-worksheets.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "logicAppRegisterVisitor",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionCommonDataService')]",
+                "[resourceId('Microsoft.Resources/deployments', 'apiConnectionOffice365')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-register-visitor.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        }
+    ]
+}

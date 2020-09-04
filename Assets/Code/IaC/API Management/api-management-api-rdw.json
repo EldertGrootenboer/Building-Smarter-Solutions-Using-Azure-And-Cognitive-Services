@@ -1,0 +1,144 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service/apis",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name)]",
+            "properties": {
+                "displayName": "[parameters('full').apiManagement.apis.rdw.displayName]",
+                "subscriptionRequired": true,
+                "serviceUrl": "[parameters('full').apiManagement.apis.rdw.serviceUrl]",
+                "path": "[parameters('full').apiManagement.apis.rdw.name]",
+                "protocols": [
+                    "https"
+                ],
+                "isCurrent": true
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+            ],
+            "properties": {
+                "displayName": "Fuel Types",
+                "method": "GET",
+                "urlTemplate": "[parameters('full').apiManagement.apis.rdw.operations.fuelTypes.urlTemplate]",
+                "templateParameters": [
+                    {
+                        "name": "licensePlateNumber",
+                        "description": "License plate number",
+                        "type": "string",
+                        "required": true,
+                        "values": [
+                            "PJ811G"
+                        ]
+                    }
+                ],
+                "request": {
+                },
+                "responses": [
+                    {
+                        "statusCode": 200,
+                        "description": "",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "[[\r\n    {\r\n        \"kenteken\": \"PJ811G\",\r\n        \"brandstof_volgnummer\": \"1\",\r\n        \"brandstof_omschrijving\": \"Benzine\",\r\n        \"brandstofverbruik_buiten\": \"4.30\",\r\n        \"brandstofverbruik_gecombineerd\": \"4.80\",\r\n        \"brandstofverbruik_stad\": \"5.70\",\r\n        \"co2_uitstoot_gecombineerd\": \"109\",\r\n        \"geluidsniveau_rijdend\": \"69\",\r\n        \"geluidsniveau_stationair\": \"71\",\r\n        \"emissiecode_omschrijving\": \"6\",\r\n        \"milieuklasse_eg_goedkeuring_licht\": \"715/2007*2015/45W\",\r\n        \"uitstoot_deeltjes_licht\": \"0.00037\",\r\n        \"nettomaximumvermogen\": \"81.00\",\r\n        \"toerental_geluidsniveau\": \"3750\"\r\n    }\r\n]]"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+            ],
+            "properties": {
+                "displayName": "Licensed Cars",
+                "method": "GET",
+                "urlTemplate": "[parameters('full').apiManagement.apis.rdw.operations.licensedCars.urlTemplate]",
+                "templateParameters": [
+                    {
+                        "name": "licensePlateNumber",
+                        "description": "License plate number",
+                        "type": "string",
+                        "required": true,
+                        "values": [
+                            "PJ811G"
+                        ]
+                    }
+                ],
+                "request": {
+                },
+                "responses": [
+                    {
+                        "statusCode": 200,
+                        "description": "",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "[[\r\n    {\r\n        \"kenteken\": \"PJ811G\",\r\n        \"voertuigsoort\": \"Personenauto\",\r\n        \"merk\": \"VOLKSWAGEN\",\r\n        \"handelsbenaming\": \"GOLF\",\r\n        \"vervaldatum_apk\": \"20210719\",\r\n        \"datum_tenaamstelling\": \"20170719\",\r\n        \"bruto_bpm\": \"3236\",\r\n        \"inrichting\": \"stationwagen\",\r\n        \"aantal_zitplaatsen\": \"5\",\r\n        \"eerste_kleur\": \"GRIJS\",\r\n        \"tweede_kleur\": \"Niet geregistreerd\",\r\n        \"aantal_cilinders\": \"3\",\r\n        \"cilinderinhoud\": \"999\",\r\n        \"massa_ledig_voertuig\": \"1157\",\r\n        \"toegestane_maximum_massa_voertuig\": \"1770\",\r\n        \"massa_rijklaar\": \"1257\",\r\n        \"maximum_massa_trekken_ongeremd\": \"620\",\r\n        \"maximum_trekken_massa_geremd\": \"1300\",\r\n        \"zuinigheidslabel\": \"B\",\r\n        \"datum_eerste_toelating\": \"20170719\",\r\n        \"datum_eerste_afgifte_nederland\": \"20170719\",\r\n        \"wacht_op_keuren\": \"Geen verstrekking in Open Data\",\r\n        \"catalogusprijs\": \"33423\",\r\n        \"wam_verzekerd\": \"Ja\",\r\n        \"aantal_deuren\": \"5\",\r\n        \"aantal_wielen\": \"4\",\r\n        \"afstand_hart_koppeling_tot_achterzijde_voertuig\": \"0\",\r\n        \"afstand_voorzijde_voertuig_tot_hart_koppeling\": \"0\",\r\n        \"lengte\": \"0\",\r\n        \"breedte\": \"0\",\r\n        \"europese_voertuigcategorie\": \"M1\",\r\n        \"plaats_chassisnummer\": \"in motorruimte r.\",\r\n        \"technische_max_massa_voertuig\": \"1770\",\r\n        \"type\": \"AU\",\r\n        \"typegoedkeuringsnummer\": \"e1*2007/46*0623*28\",\r\n        \"variant\": \"GAC4CHZCX0\",\r\n        \"uitvoering\": \"FD7FD7CW001N7MMON1VL63VR2N\",\r\n        \"volgnummer_wijziging_eu_typegoedkeuring\": \"0\",\r\n        \"vermogen_massarijklaar\": \"0.06\",\r\n        \"wielbasis\": \"262\",\r\n        \"export_indicator\": \"Nee\",\r\n        \"openstaande_terugroepactie_indicator\": \"Nee\",\r\n        \"taxi_indicator\": \"Nee\",\r\n        \"maximum_massa_samenstelling\": \"3110\",\r\n        \"aantal_rolstoelplaatsen\": \"0\",\r\n        \"maximum_ondersteunende_snelheid\": \"0\",\r\n        \"api_gekentekende_voertuigen_assen\": \"https://opendata.rdw.nl/resource/3huj-srit.json\",\r\n        \"api_gekentekende_voertuigen_brandstof\": \"https://opendata.rdw.nl/resource/8ys7-d773.json\",\r\n        \"api_gekentekende_voertuigen_carrosserie\": \"https://opendata.rdw.nl/resource/vezc-m2t6.json\",\r\n        \"api_gekentekende_voertuigen_carrosserie_specifiek\": \"https://opendata.rdw.nl/resource/jhie-znh9.json\",\r\n        \"api_gekentekende_voertuigen_voertuigklasse\": \"https://opendata.rdw.nl/resource/kmfi-hrps.json\"\r\n    }\r\n]]"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', parameters('full').keyVault.name, '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.rdwApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"rdwApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"X-App-Token\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"rdwApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "rawxml"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <rewrite-uri template=\"8ys7-d773.json?kenteken={licensePlateNumber}\" copy-unmatched-params=\"false\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "xml"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.licensedCars.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <rewrite-uri template=\"m9d7-ebf2.json?kenteken={licensePlateNumber}\" copy-unmatched-params=\"false\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "xml"
+            }
+        }
+    ]
+}

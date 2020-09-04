@@ -1,0 +1,140 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service/apis",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.visitors.name)]",
+            "properties": {
+                "displayName": "[parameters('full').apiManagement.apis.visitors.displayName]",
+                "subscriptionRequired": true,
+                "serviceUrl": "[parameters('full').apiManagement.apis.visitors.serviceUrl]",
+                "path": "[parameters('full').apiManagement.apis.visitors.name]",
+                "protocols": [
+                    "https"
+                ],
+                "isCurrent": true
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.visitors.name, '/', parameters('full').apiManagement.apis.visitors.operations.create.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.visitors.name)]"
+            ],
+            "properties": {
+                "displayName": "Create",
+                "method": "POST",
+                "urlTemplate": "[parameters('full').apiManagement.apis.visitors.operations.create.urlTemplate]",
+                "templateParameters": [],
+                "request": {
+                    "description": "The request body.",
+                    "queryParameters": [],
+                    "headers": [],
+                    "representations": [
+                        {
+                            "contentType": "application/json",
+                            "sample": "{\r\n    \"ship\": \"Somtrans LNG\",\r\n    \"visitor\": \"Eldert Grootenboer\",\r\n    \"visitDate\": \"2020-08-01\",\r\n    \"reason\": \"repair\",\r\n    \"email\": \"sample@domain.com\"\r\n}",
+                            "typeName": "request-manual"
+                        }
+                    ]
+                },
+                "responses": [
+                    {
+                        "statusCode": 200,
+                        "description": "The Logic App Response.",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "typeName": "ManualPathsInvokePost200ApplicationJsonResponse",
+                                "generatedSample": "{}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 202,
+                        "description": "The Logic App Response.",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "typeName": "ManualPathsInvokePost202ApplicationJsonResponse",
+                                "generatedSample": "{}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 404,
+                        "description": "The Logic App Response.",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "typeName": "ManualPathsInvokePost404ApplicationJsonResponse",
+                                "generatedSample": "{}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 500,
+                        "description": "The Logic App Response.",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "typeName": "ManualPathsInvokePost500ApplicationJsonResponse",
+                                "generatedSample": "{}"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/backends",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').logicApps.registerVisitor.name)]",
+            "properties": {
+                "url": "[replace(listCallbackURL(concat(resourceId('Microsoft.Logic/workflows', parameters('full').logicApps.registerVisitor.name), '/triggers/manual'), '2016-06-01').basePath, '/manual/paths/invoke', '')]",
+                "protocol": "http",
+                "resourceId": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Logic/workflows/', parameters('full').logicApps.registerVisitor.name)]"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.visitors.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.visitors.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/backends', parameters('full').apiManagement.name, parameters('full').logicApps.registerVisitor.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <set-backend-service id=\"apim-generated-policy\" backend-id=\"', parameters('full').logicApps.registerVisitor.name, '\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "xml"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.visitors.name, '/', parameters('full').apiManagement.apis.visitors.operations.create.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.visitors.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.visitors.name, parameters('full').apiManagement.apis.visitors.operations.create.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <set-method id=\"apim-generated-policy\">POST</set-method>\r\n        <rewrite-uri id=\"apim-generated-policy\" template=\"/manual/paths/invoke/?api-version=2016-06-01&amp;sp=', listCallbackURL(concat(resourceId('Microsoft.Logic/workflows', parameters('full').logicApps.registerVisitor.name), '/triggers/manual'), '2016-06-01').queries.sp, '&amp;sv=', listCallbackURL(concat(resourceId('Microsoft.Logic/workflows', parameters('full').logicApps.registerVisitor.name), '/triggers/manual'), '2016-06-01').queries.sv, '&amp;sig=', listCallbackURL(concat(resourceId('Microsoft.Logic/workflows', parameters('full').logicApps.registerVisitor.name), '/triggers/manual'), '2016-06-01').queries.sig, '\" />\r\n        <set-header id=\"apim-generated-policy\" name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n        <set-backend-service base-url=\"', replace(listCallbackURL(concat(resourceId('Microsoft.Logic/workflows', parameters('full').logicApps.registerVisitor.name), '/triggers/manual'), '2016-06-01').basePath, '/manual/paths/invoke', ''), '\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "xml"
+            }
+        }
+    ]
+}

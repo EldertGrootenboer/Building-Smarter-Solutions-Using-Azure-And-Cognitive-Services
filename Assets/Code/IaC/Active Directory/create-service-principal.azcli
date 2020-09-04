@@ -1,0 +1,1 @@
+az ad sp create-for-rbac --name sp-building-smarter-solutions-using-cognitive-services

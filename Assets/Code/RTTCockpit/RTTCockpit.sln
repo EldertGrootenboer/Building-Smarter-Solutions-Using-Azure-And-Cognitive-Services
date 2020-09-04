@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTTCockpit", "RTTCockpit\RTTCockpit.csproj", "{ADD26641-A307-4606-99D1-805F11AF02CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADD26641-A307-4606-99D1-805F11AF02CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADD26641-A307-4606-99D1-805F11AF02CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADD26641-A307-4606-99D1-805F11AF02CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADD26641-A307-4606-99D1-805F11AF02CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0791888E-6055-4F76-B379-79C1A078A97A}
+	EndGlobalSection
+EndGlobal

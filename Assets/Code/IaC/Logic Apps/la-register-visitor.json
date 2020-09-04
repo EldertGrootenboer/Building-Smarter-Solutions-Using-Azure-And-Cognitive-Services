@@ -1,0 +1,307 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('full').logicApps.registerVisitor.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "email": {
+                                            "type": "string"
+                                        },
+                                        "reason": {
+                                            "type": "string"
+                                        },
+                                        "ship": {
+                                            "type": "string"
+                                        },
+                                        "visitDate": {
+                                            "type": "string"
+                                        },
+                                        "visitor": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Check_ship_found": {
+                            "actions": {},
+                            "runAfter": {
+                                "Get_ship": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "Ship_not_found": {
+                                        "runAfter": {},
+                                        "type": "Response",
+                                        "kind": "Http",
+                                        "inputs": {
+                                            "body": "The ship which you want to visit is not known in our systems. Please contact the ship and make sure they are registered at Rotterdam Tank Terminals.",
+                                            "statusCode": 404
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "greater": [
+                                            "@length(body('Get_Ship')?['value'])",
+                                            0
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Check_visitor_found": {
+                            "actions": {
+                                "OK": {
+                                    "runAfter": {},
+                                    "type": "Response",
+                                    "kind": "Http",
+                                    "inputs": {
+                                        "statusCode": 200
+                                    }
+                                },
+                                "Update_visitor": {
+                                    "runAfter": {
+                                        "OK": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "cr105_visits": "[concat('@{concat(triggerBody()?[''visitDate''], '' - '', triggerBody()?[''ship''], '' - '', triggerBody()?[''reason''], ''\r\n'', body(''Get_visitor'')?[''value'']?[0]?[''', parameters('full').commonDataService.entities.visitors.fields.visits, '''])}')]"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                            }
+                                        },
+                                        "method": "patch",
+                                        "path": "[concat('/v2/datasets/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.organization, '''))}/tables/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.entities.visitors.name, '''))}/items/@{encodeURIComponent(encodeURIComponent(body(''Get_visitor'')?[''value'']?[0]?[''', parameters('full').commonDataService.entities.visitors.fields.visitorId, ''']))}')]"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Get_visitor": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "Check_ship_approves_visitor": {
+                                        "actions": {
+                                            "Create_visitor": {
+                                                "runAfter": {},
+                                                "type": "ApiConnection",
+                                                "inputs": {
+                                                    "body": {
+                                                        "cr105_email": "@triggerBody()?['email']",
+                                                        "cr105_name": "@triggerBody()?['visitor']",
+                                                        "cr105_securitycoursedone": false,
+                                                        "cr105_visits": "@{triggerBody()?['visitDate']} - @{triggerBody()?['ship']} - @{triggerBody()?['reason']}"
+                                                    },
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "post",
+                                                    "path": "[concat('/v2/datasets/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.organization, '''))}/tables/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.entities.visitors.name, '''))}/items')]"
+                                                }
+                                            }
+                                        },
+                                        "runAfter": {
+                                            "Send_approval_email": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "else": {
+                                            "actions": {
+                                                "Terminate": {
+                                                    "runAfter": {},
+                                                    "type": "Terminate",
+                                                    "inputs": {
+                                                        "runStatus": "Succeeded"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "equals": [
+                                                        "@body('Send_approval_email')?['SelectedOption']",
+                                                        "Yes"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "type": "If"
+                                    },
+                                    "Send_approval_email": {
+                                        "runAfter": {
+                                            "Validation_needed": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "ApiConnectionWebhook",
+                                        "inputs": {
+                                            "body": {
+                                                "Message": {
+                                                    "Body": "Hi,\n\nWe need your input, we have a registered visitor called @{triggerBody()?['visitor']} for your ship.\nThey will be coming by for @{triggerBody()?['reason']} on @{triggerBody()?['visitDate']}.\nDo you know and expect this person?\n\nCheers,\nRotterdam Tank Terminals",
+                                                    "HideHTMLMessage": true,
+                                                    "Importance": "Normal",
+                                                    "Options": "Yes, No",
+                                                    "ShowHTMLConfirmationDialog": false,
+                                                    "Subject": "Visitor validation required",
+                                                    "To": "[concat('@{body(''Get_ship'')?[''value'']?[0]?[''', parameters('full').commonDataService.entities.ships.fields.email, ''']}')]"
+                                                },
+                                                "NotificationUrl": "@{listCallbackUrl()}"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['office365']['connectionId']"
+                                                }
+                                            },
+                                            "path": "/approvalmail/$subscriptions"
+                                        }
+                                    },
+                                    "Validation_needed": {
+                                        "runAfter": {},
+                                        "type": "Response",
+                                        "kind": "Http",
+                                        "inputs": {
+                                            "body": "We require additional validation from the ship. You will be contacted once the ship has validated your visit.",
+                                            "statusCode": 202
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "greater": [
+                                            "@length(body('Get_visitor')?['value'])",
+                                            0
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Create_event_(V4)": {
+                            "runAfter": {
+                                "Check_visitor_found": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "end": "@{addDays(triggerBody()?['visitDate'], 1)}",
+                                    "requiredAttendees": "[concat('@{triggerBody()?[''email'']};@{body(''Get_ship'')?[''value'']?[0]?[''', parameters('full').commonDataService.entities.ships.fields.email, ''']}')]",
+                                    "start": "@triggerBody()?['visitDate']",
+                                    "subject": "@{triggerBody()?['ship']} - @{triggerBody()?['visitor']} - @{triggerBody()?['reason']}",
+                                    "timeZone": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/calendars/v4/tables/@{encodeURIComponent(encodeURIComponent('AAMkADMxNWI4NDgzLTY4MTUtNDYxNy1hNjA5LTVlMGZkNjJiYjFhNgBGAAAAAACu5J8UvCZnSrsZ4wYO_uv2BwD5VTPtnoNsSINYvzcsC6FrAAAAPo8QAAApexEcbekYRJ7lHKFrX8hRAHxxz4IBAAA='))}/items"
+                            }
+                        },
+                        "Get_ship": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "[concat('/v2/datasets/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.organization, '''))}/tables/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.entities.ships.name, '''))}/items')]",
+                                "queries": {
+                                    "$filter": "[concat(parameters('full').commonDataService.entities.ships.fields.shipName, ' eq ''@{triggerBody()?[''ship'']}''')]"
+                                }
+                            }
+                        },
+                        "Get_visitor": {
+                            "runAfter": {
+                                "Check_ship_found": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "[concat('/v2/datasets/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.organization, '''))}/tables/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.entities.visitors.name, '''))}/items')]",
+                                "queries": {
+                                    "$filter": "[concat(parameters('full').commonDataService.entities.visitors.fields.name, ' eq ''@{triggerBody()?[''visitor'']}''')]"
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "commondataservice": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.commondataservice)]",
+                                "connectionName": "commondataservice",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/commondataservice')]"
+                            },
+                            "office365": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.office365)]",
+                                "connectionName": "office365",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/office365')]"
+                            }
+                        }
+                    }
+                },
+                "state": "Enabled"
+            }
+        }
+    ]
+}

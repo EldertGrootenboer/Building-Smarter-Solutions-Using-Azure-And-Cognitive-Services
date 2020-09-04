@@ -1,0 +1,365 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('full').logicApps.processWorksheets.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "type": "Object"
+                        },
+                        "ApiManagementSubscriptionKey": {
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_resource_event_occurs": {
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnectionWebhook",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "destination": {
+                                            "endpointType": "webhook",
+                                            "properties": {
+                                                "endpointUrl": "@{listCallbackUrl()}"
+                                            }
+                                        },
+                                        "filter": {
+                                            "includedEventTypes": [
+                                                "Microsoft.Storage.BlobCreated"
+                                            ],
+                                            "subjectBeginsWith": "[concat('/blobServices/default/containers/', parameters('full').storageAccount.containers.departureCamera)]"
+                                        },
+                                        "topic": "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureeventgrid']['connectionId']"
+                                    }
+                                },
+                                "path": "[concat('/subscriptions/@{encodeURIComponent(''', subscription().subscriptionId, ''')}/providers/@{encodeURIComponent(''Microsoft.Storage.StorageAccounts'')}/resource/eventSubscriptions')]",
+                                "queries": {
+                                    "x-ms-api-version": "2017-06-15-preview"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "AnalyzeWithCustomForm": {
+                            "runAfter": {
+                                "RetrieveLatestModel": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiManagement",
+                            "inputs": {
+                                "api": {
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.formRecognizer.name)]"
+                                },
+                                "body": {
+                                    "source": "@{body('Create_SAS_URI_by_path')?['WebUrl']}"
+                                },
+                                "method": "post",
+                                "pathTemplate": {
+                                    "parameters": {
+                                        "modelId": "[concat('@{encodeURIComponent(body(''', parameters('full').functionApps.retrieveLatestModel.function, '''))}')]"
+                                    },
+                                    "template": "[concat('/', parameters('full').apiManagement.apis.formRecognizer.name, parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.urlTemplate)]"
+                                },
+                                "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
+                            }
+                        },
+                        "Condition": {
+                            "actions": {
+                                "Parse_JSON": {
+                                    "runAfter": {},
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@body('GetAnalyzeFormResult')?['analyzeResult']?['documentResults']",
+                                        "schema": {
+                                            "items": {
+                                                "properties": {
+                                                    "fields": {
+                                                        "properties": {
+                                                            "Date": {
+                                                                "properties": {
+                                                                    "text": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "Reason": {
+                                                                "properties": {
+                                                                    "text": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "Ship": {
+                                                                "properties": {
+                                                                    "text": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "Signature": {
+                                                                "properties": {
+                                                                    "text": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "Signee": {
+                                                                "properties": {
+                                                                    "text": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "fields"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        }
+                                    }
+                                },
+                                "Send_message": {
+                                    "runAfter": {
+                                        "Parse_JSON": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "ContentData": "@{base64(concat('{','\n','    \"ship\": \"',body('Parse_JSON')[0]?['fields']?['Ship']?['text'],'\",','\n','    \"reason\": \"',body('Parse_JSON')[0]?['fields']?['Reason']?['text'],'\",','\n','    \"date\": \"',body('Parse_JSON')[0]?['fields']?['Date']?['text'],'\",','\n','    \"signedBy\": \"',body('Parse_JSON')[0]?['fields']?['Signee']?['text'],'\",','\n','    \"signatureFound\": \"',greater(length(body('Parse_JSON')[0]?['fields']?['Signature']?['text']), 0),'\",','\n','    \"imageUrl\": \"',body('Create_SAS_URI_by_path')?['WebUrl'],'\"','\n','}'))}"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['servicebus']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "[concat('/@{encodeURIComponent(encodeURIComponent(''', parameters('full').serviceBus.queues.departureCamera, '''))}/messages')]",
+                                        "queries": {
+                                            "systemProperties": "None"
+                                        }
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Until": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            "@variables('Status')",
+                                            "succeeded"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Create_SAS_URI_by_path": {
+                            "runAfter": {
+                                "Filename": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Permissions": "Read"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/default/CreateSharedLinkByPath",
+                                "queries": {
+                                    "path": "[concat('/@{parameters(''', parameters('full').storageAccount.containers.departureCamera, ''')}/@{variables(''Filename'')}')]"
+                                }
+                            }
+                        },
+                        "Filename": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Filename",
+                                        "type": "string",
+                                        "value": "@{substring(triggerBody()?['subject'], add(lastIndexOf(triggerBody()?['subject'], '/'), 1))}"
+                                    }
+                                ]
+                            }
+                        },
+                        "Result_Id": {
+                            "runAfter": {
+                                "AnalyzeWithCustomForm": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Result Id",
+                                        "type": "string",
+                                        "value": "@{substring(outputs('AnalyzeWithCustomForm')['headers']?['Operation-Location'], add(lastIndexOf(outputs('AnalyzeWithCustomForm')['headers']?['Operation-Location'], '/'), 1))}"
+                                    }
+                                ]
+                            }
+                        },
+                        "RetrieveLatestModel": {
+                            "runAfter": {
+                                "Create_SAS_URI_by_path": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Function",
+                            "inputs": {
+                                "function": {
+                                    "id": "[resourceId('Microsoft.Web/sites/functions', parameters('full').functionApps.retrieveLatestModel.name, parameters('full').functionApps.retrieveLatestModel.function)]"
+                                },
+                                "method": "GET"
+                            }
+                        },
+                        "Status": {
+                            "runAfter": {
+                                "Result_Id": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Status",
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        },
+                        "Until": {
+                            "actions": {
+                                "Delay": {
+                                    "runAfter": {},
+                                    "type": "Wait",
+                                    "inputs": {
+                                        "interval": {
+                                            "count": 5,
+                                            "unit": "Second"
+                                        }
+                                    }
+                                },
+                                "GetAnalyzeFormResult": {
+                                    "runAfter": {
+                                        "Delay": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiManagement",
+                                    "inputs": {
+                                        "api": {
+                                            "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.formRecognizer.name)]"
+                                        },
+                                        "method": "get",
+                                        "pathTemplate": {
+                                            "parameters": {
+                                                "modelId": "@{encodeURIComponent(body('RetrieveLatestModel'))}",
+                                                "resultId": "@{encodeURIComponent(variables('Result Id'))}"
+                                            },
+                                            "template": "[concat('/', parameters('full').apiManagement.apis.formRecognizer.name, parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.urlTemplate)]"
+                                        },
+                                        "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
+                                    }
+                                },
+                                "Set_variable": {
+                                    "runAfter": {
+                                        "GetAnalyzeFormResult": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "SetVariable",
+                                    "inputs": {
+                                        "name": "Status",
+                                        "value": "@body('GetAnalyzeFormResult')['status']"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Status": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": "@or(equals(variables('Status'), 'succeeded'), equals(variables('Status'), 'failed'))",
+                            "limit": {
+                                "count": 60,
+                                "timeout": "PT1H"
+                            },
+                            "type": "Until"
+                        }
+                    }
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureblob": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.azureblob)]",
+                                "connectionName": "azureblob",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/azureblob')]"
+                            },
+                            "azureeventgrid": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.azureeventgrid)]",
+                                "connectionName": "azureeventgrid",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/azureeventgrid')]"
+                            },
+                            "servicebus": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.servicebus)]",
+                                "connectionName": "servicebus",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/servicebus')]"
+                            }
+                        }
+                    },
+                    "ApiManagementSubscriptionKey": {
+                        "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', parameters('full').apiManagement.name, parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                    }
+                },
+                "state": "Enabled"
+            }
+        }
+    ]
+}

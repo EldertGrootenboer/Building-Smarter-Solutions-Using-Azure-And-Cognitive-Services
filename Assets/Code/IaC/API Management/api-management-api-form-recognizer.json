@@ -1,0 +1,300 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service/apis",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.formRecognizer.name)]",
+            "properties": {
+                "displayName": "[parameters('full').apiManagement.apis.formRecognizer.displayName]",
+                "subscriptionRequired": true,
+                "serviceUrl": "[parameters('full').apiManagement.apis.formRecognizer.serviceUrl]",
+                "path": "[parameters('full').apiManagement.apis.formRecognizer.name]",
+                "protocols": [
+                    "https"
+                ],
+                "isCurrent": true
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.formRecognizer.name, '/', parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.formRecognizer.name)]"
+            ],
+            "properties": {
+                "displayName": "Analyze Form",
+                "method": "POST",
+                "urlTemplate": "[parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.urlTemplate]",
+                "templateParameters": [
+                    {
+                        "name": "modelId",
+                        "description": "Format - uuid. Model identifier.",
+                        "type": "string",
+                        "required": true,
+                        "values": []
+                    }
+                ],
+                "request": {
+                    "description": ".json, .pdf, .jpg, .png or .tiff type file stream.",
+                    "queryParameters": [
+                        {
+                            "name": "includeTextDetails",
+                            "description": "Include text lines and element references in the result.  Default: false.",
+                            "type": "boolean",
+                            "values": []
+                        }
+                    ],
+                    "headers": [],
+                    "representations": [
+                        {
+                            "contentType": "application/json",
+                            "sample": "{\r\n  \"source\": \"http://example.com/test.jpg\"\r\n}",
+                            "typeName": "SourcePath"
+                        },
+                        {
+                            "contentType": "application/pdf",
+                            "sample": "{\r\n  \"source\": \"http://example.com/test.jpg\"\r\n}",
+                            "typeName": "SourcePath"
+                        },
+                        {
+                            "contentType": "image/jpeg",
+                            "sample": "{\r\n  \"source\": \"http://example.com/test.jpg\"\r\n}",
+                            "typeName": "SourcePath"
+                        },
+                        {
+                            "contentType": "image/png",
+                            "sample": "{\r\n  \"source\": \"http://example.com/test.jpg\"\r\n}",
+                            "typeName": "SourcePath"
+                        },
+                        {
+                            "contentType": "image/tiff",
+                            "sample": "{\r\n  \"source\": \"http://example.com/test.jpg\"\r\n}",
+                            "typeName": "SourcePath"
+                        }
+                    ]
+                },
+                "responses": [
+                    {
+                        "statusCode": 202,
+                        "description": "The service has accepted the request and will start processing soon.  The client can query the operation status and result using the URL specified in the 'Operation-Location' response header.  The URL expires in 48 hours.\n<br/>\n<table class=\"element table\">\n    <thead/>\n    <tbody>\n        <tr>\n            <td>\n                <b>Operation-Location</b>\n            </td>\n            <td>\n                URL containing the resultId used to track the progress and obtain the result of the analyze operation.\n                <br/>\n                Example: https://cognitiveservice/formrecognizer/v2.0/custom/models/{modelId}/analyzeResults/{resultId}\n            </td>\n        </tr>\n    </tbody>\n</table>",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "typeName": "AnalyzeOperationResult"
+                            }
+                        ],
+                        "headers": [
+                            {
+                                "name": "Operation-Location",
+                                "description": "URL containing the resultId used to track the progress and obtain the result of the analyze operation.",
+                                "type": "string",
+                                "values": []
+                            }
+                        ]
+                    },
+                    {
+                        "statusCode": 400,
+                        "description": "Bad request error.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 404,
+                        "description": "Model not found.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 415,
+                        "description": "Unsupported media type error. 'Content-Type' does not match the POST content.\n<br/>\n<ul>\n    <li>For image URL, 'Content-Type' should be 'application/json'.</li>\n    <li>For binary PDF data, 'Content-Type' should be 'application/pdf'.</li>\n    <li>For binary image data, 'Content-Type' should be 'image/jpeg', 'image/png' or 'image/tiff'.</li>\n</ul>\n<br/>",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 500,
+                        "description": "Internal server error.\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 503,
+                        "description": "Transient fault.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.formRecognizer.name, '/', parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.formRecognizer.name)]"
+            ],
+            "properties": {
+                "displayName": "Get Analyze Form Result",
+                "method": "GET",
+                "urlTemplate": "[parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.urlTemplate]",
+                "templateParameters": [
+                    {
+                        "name": "modelId",
+                        "description": "Format - uuid. Model identifier.",
+                        "type": "string",
+                        "required": true,
+                        "values": []
+                    },
+                    {
+                        "name": "resultId",
+                        "description": "Format - uuid. Analyze operation result identifier.",
+                        "type": "string",
+                        "required": true,
+                        "values": []
+                    }
+                ],
+                "request": {
+                },
+                "responses": [
+                    {
+                        "statusCode": 200,
+                        "description": "JSON fields in the response body:\n<table class=\"element table\">\n  <thead>\n    <tr>\n      <th>Field</th>\n      <th>Type</th>\n      <th>Description</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>status</td>\n      <th>String</th>\n      <td><a href=\"/docs/services/form-recognizer-api-v2-preview/operations/AnalyzeWithCustomForm\">Analyze Form</a> operation status.\n        Possible values:<ul>\n          <li><b>notStarted</b>: The analysis operation has not started.</li>\n          <li><b>running</b>: The analysis operation is in progress.</li>\n          <li><b>failed</b>: The analysis operation has failed.</li>\n          <li><b>succeeded</b>: The analysis operation has succeeded.</li>\n        </ul>If the status is <b>succeeded</b>, the response JSON will include the form understanding and text recognition results. The form understanding result is organized as a list of key-value pairs and tables for each page, as well as a set of recognized fields for each detected document. When includeTextDetails is true, the detailed text recognition result is organized as a hierarchy of lines and words, with text, bounding box and confidence information.</td>\n    </tr>\n    <tr>\n      <td>createdDateTime</td>\n      <th>String</th>\n      <td>Date and time (UTC) when the operation was created.</td>\n    </tr>\n    <tr>\n      <td>lastUpdatedDateTime</td>\n      <th>String</th>\n      <td>Date and time (UTC) when the status is last updated.</td>\n    </tr>\n    <tr>\n      <td>analyzeResult</td>\n      <th>Object</th>\n      <td>Results of the analyze operation.</td>\n    </tr>\n    <tr>\n      <td>version</td>\n      <th>String</th>\n      <td>The version of schema used for this result.</td>\n    </tr>\n    <tr>\n      <td>readResults</td>\n      <th>[Object]</th>\n      <td>List of of extracted text result for each page in the input document.</td>\n    </tr>\n    <tr>\n      <td>page</td>\n      <th>Integer</th>\n      <td>The 1-based page number in the input document.</td>\n    </tr>\n    <tr>\n      <td>width</td>\n      <th>Number</th>\n      <td>The width of the image/PDF in pixels/inches, respectively.</td>\n    </tr>\n    <tr>\n      <td>height</td>\n      <th>Number</th>\n      <td>The height of the image/PDF in pixels/inches, respectively.</td>\n    </tr>\n    <tr>\n      <td>unit</td>\n      <th>String</th>\n      <td>The unit used by the width, height and boundingBox properties. For images, the unit is \"pixel\". For PDF, the unit is \"inch\".</td>\n    </tr>\n    <tr>\n      <td>angle</td>\n      <th>Number</th>\n      <td>The general orientation of the text in clockwise direction, measured in degrees between (-180, 180].</td>\n    </tr>\n    <tr>\n      <td>language</td>\n      <th>String</th>\n      <td>The detected language on the page overall or of a specific line if different from the page.</td>\n    </tr>\n    <tr>\n      <td>lines</td>\n      <th>[Object]</th>\n      <td>\n        List of text lines. The maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to right, although in certain cases proximity is treated with higher priority. As the sorting order depends on the detected text, it may change across images and OCR version updates. Thus, business logic should be built upon the actual line location instead of order. This field only appears when <b>includeTextDetails</b> is set to true.\n      </td>\n    </tr>\n    <tr>\n      <td>words</td>\n      <th>[Object]</th>\n      <td>List of words in the text line.</td>\n    </tr>\n    <tr>\n      <td>boundingBox</td>\n      <th>[Number]</th>\n      <td>\n        Quadrangle bounding box of a line or word, depending on the parent object, specified as a list of 8 numbers. The coordinates are specified relative to the top-left of the original image. The eight numbers represent the four points, clockwise from the top-left corner relative to the text orientation. For image, the (x, y) coordinates are measured in pixels. For PDF, the (x, y) coordinates are measured in inches.\n      </td>\n    </tr>\n    <tr>\n      <td>text</td>\n      <th>String</th>\n      <td>Extracted field text in documentResults, or the text content of a word/line in readResults.</td>\n    </tr>\n    <tr>\n      <td>confidence</td>\n      <th>Number</th>\n      <td>Confidence value.</td>\n    </tr>\n    <tr>\n      <td>pageResults</td>\n      <th>[Object]</th>\n      <td>Page-level information extracted from the input.</td>\n    </tr>\n    <tr>\n      <td>page</td>\n      <th>Integer</th>\n      <td>Page number.</td>\n    </tr>\n    <tr>\n      <td>clusterId</td>\n      <th>Integer</th>\n      <td>Cluster identifier.</td>\n    </tr>\n    <tr>\n      <td>keyValuePairs</td>\n      <th>[Object]</th>\n      <td>List of key-value pairs extracted from the page.</td>\n    </tr>\n    <tr>\n      <td>tables</td>\n      <th>[Object]</th>\n      <td>List of data tables extracted from the page.</td>\n    </tr>\n    <tr>\n      <td>label</td>\n      <th>String</th>\n      <td>A user defined label for the key/value pair entry.</td>\n    </tr>\n    <tr>\n      <td>key</td>\n      <th>Object</th>\n      <td>Information about the extracted key in a key-value pair.</td>\n    </tr>\n    <tr>\n      <td>value</td>\n      <th>Object</th>\n      <td>Information about the extracted value in a key-value pair.</td>\n    </tr>\n    <tr>\n      <td>rows</td>\n      <th>Integer</th>\n      <td>Number of rows.</td>\n    </tr>\n    <tr>\n      <td>columns</td>\n      <th>Integer</th>\n      <td>Number of columns.</td>\n    </tr>\n    <tr>\n      <td>cells</td>\n      <th>[Object]</th>\n      <td>List of cells contained in the table.</td>\n    </tr>\n    <tr>\n      <td>rowIndex</td>\n      <th>Integer</th>\n      <td>Row index of the cell.</td>\n    </tr>\n    <tr>\n      <td>columnIndex</td>\n      <th>Integer</th>\n      <td>Column index of the cell.</td>\n    </tr>\n    <tr>\n      <td>rowSpan</td>\n      <th>Integer</th>\n      <td>Number of rows spanned by this cell.</td>\n    </tr>\n    <tr>\n      <td>columnSpan</td>\n      <th>Integer</th>\n      <td>Number of columns spanned by this cell.</td>\n    </tr>\n    <tr>\n      <td>elements</td>\n      <th>[String]</th>\n      <td>When includeTextDetails is set to true, a list of JSON references to the text elements constituting this field.</td>\n    </tr>\n    <tr>\n      <td>documentResults</td>\n      <th>[Object]</th>\n      <td>An array of objects, each representing a receipt detected in the input document.</td>\n    </tr>\n    <tr>\n      <td>docType</td>\n      <th>String</th>\n      <td>The value is set to \"prebuilt:receipt\" to indicate a receipt document.</td>\n    </tr>\n    <tr>\n      <td>pageRange</td>\n      <th>[Integer, Integer]</th>\n      <td>First and last page numbers where the receipt is found. Currently, only single-page receipts are supported.</td>\n    </tr>\n    <tr>\n      <td>fields</td>\n      <th>Object</th>\n      <td>Dictionary of detected field values.</td>\n    </tr>\n    <tr>\n      <td>type</td>\n      <th>String</th>\n      <td>Data type of the field value. Currently, possible types include \"string\", \"number\", \"phoneNumber\", \"date\", \"time\", \"array\", and \"object\".</td>\n    </tr>\n    <tr>\n      <td>valueString</td>\n      <th>String</th>\n      <td>Semantic value of \"string\" fields.</td>\n    </tr>\n    <tr>\n      <td>valueNumber</td>\n      <th>Number</th>\n      <td>Semantic value of \"number\" fields.</td>\n    </tr>\n    <tr>\n      <td>valuePhoneNumber</td>\n      <th>String</th>\n      <td>Semantic value of \"phoneNumber\" fields.</td>\n    </tr>\n    <tr>\n      <td>valueDate</td>\n      <th>String</th>\n      <td>Semantic value of \"date\" fields.</td>\n    </tr>\n    <tr>\n      <td>valueTime</td>\n      <th>String</th>\n      <td>Semantic value of \"time\" fields.</td>\n    </tr>\n    <tr>\n      <td>valueArray</td>\n      <th>[Object]</th>\n      <td>Semantic value of \"array\" fields.</td>\n    </tr>\n    <tr>\n      <td>valueObject</td>\n      <th>Object</th>\n      <td>Semantic value of \"object\" fields.</td>\n    </tr>\n    <tr>\n      <td>errors</td>\n      <th>[Object]</th>\n      <td>List of errors reported during the analyze operation.</td>\n    </tr>\n  </tbody>\n</table>\n",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "sample": "{}",
+                                "typeName": "AnalyzeOperationResult"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 404,
+                        "description": "Invalid or expired result identifier.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 500,
+                        "description": "Internal server error.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 503,
+                        "description": "Transient fault.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/operations",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.formRecognizer.name, '/', parameters('full').apiManagement.apis.formRecognizer.operations.listCustomModels.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.formRecognizer.name)]"
+            ],
+            "properties": {
+                "displayName": "List Custom Models",
+                "method": "GET",
+                "urlTemplate": "[parameters('full').apiManagement.apis.formRecognizer.operations.listCustomModels.urlTemplate]",
+                "templateParameters": [],
+                "request": {
+                    "queryParameters": [
+                        {
+                            "name": "op",
+                            "description": "Specify whether to return summary or full list of models.",
+                            "type": "string",
+                            "defaultValue": "full",
+                            "values": [
+                                "full",
+                                "summary"
+                            ]
+                        }
+                    ],
+                    "headers": [],
+                    "representations": []
+                },
+                "responses": [
+                    {
+                        "statusCode": 200,
+                        "description": "Success",
+                        "representations": [
+                            {
+                                "contentType": "application/json",
+                                "typeName": "Models",
+                                "generatedSample": "{\r\n  \"summary\": {\r\n    \"count\": 0,\r\n    \"limit\": 0,\r\n    \"lastUpdatedDateTime\": \"string\"\r\n  },\r\n  \"modelList\": [\r\n    {\r\n      \"modelId\": \"string\",\r\n      \"status\": \"creating\",\r\n      \"createdDateTime\": \"string\",\r\n      \"lastUpdatedDateTime\": \"string\"\r\n    }\r\n  ],\r\n  \"nextLink\": \"string\"\r\n}"
+                            }
+                        ],
+                        "headers": []
+                    },
+                    {
+                        "statusCode": 500,
+                        "description": "Response entity accompanying non-successful responses containing additional details about the error.",
+                        "representations": [
+                            {
+                                "contentType": "application/json"
+                            }
+                        ],
+                        "headers": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/apis/policies",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.formRecognizer.name, '/policy')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.formRecognizer.name)]"
+            ],
+            "properties": {
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', parameters('full').keyVault.name, '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.formApiRecognizerSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"formApiRecognizerSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"formApiRecognizerSubscriptionKey\"])</value>\r\n        </set-header>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "format": "rawxml"
+            }
+        }
+    ]
+}

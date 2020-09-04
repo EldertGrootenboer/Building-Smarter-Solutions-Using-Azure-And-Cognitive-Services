@@ -1,0 +1,136 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('full').storageAccount.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('full').storageAccount.name, '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": [
+                        {
+                            "allowedOrigins": [
+                                "*"
+                            ],
+                            "allowedMethods": [
+                                "DELETE",
+                                "GET",
+                                "HEAD",
+                                "MERGE",
+                                "POST",
+                                "OPTIONS",
+                                "PUT",
+                                "PATCH"
+                            ],
+                            "maxAgeInSeconds": 200,
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.carCamera)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.departureCamera)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.gateCamera)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.visitorPictures)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        }
+    ]
+}

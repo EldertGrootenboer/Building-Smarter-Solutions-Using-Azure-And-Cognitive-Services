@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('full').logicApps.apiConnections.azureblob]",
+            "location": "[parameters('full').general.location]",
+            "properties": {
+                "parameterValues": {
+                    "accountName": "[parameters('full').storageAccount.name]",
+                    "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name),'2015-05-01-preview').key1]"
+                },
+                "api": {
+                    "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('full').general.location, 'azureblob')]"
+                }
+            }
+        }
+    ]
+}

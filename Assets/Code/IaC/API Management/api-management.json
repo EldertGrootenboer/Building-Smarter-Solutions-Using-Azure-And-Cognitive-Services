@@ -1,0 +1,97 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ApiManagement/service",
+            "apiVersion": "2019-01-01",
+            "name": "[parameters('full').apiManagement.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "sku": {
+                "name": "[parameters('full').apiManagement.sku]",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "publisherEmail": "[parameters('full').apiManagement.publisherEmail]",
+                "publisherName": "[parameters('full').apiManagement.publisherName]"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/loggers",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').applicationInsights.name)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name)]"
+            ],
+            "properties": {
+                "loggerType": "applicationInsights",
+                "credentials": {
+                    "instrumentationKey": "[reference(resourceId('Microsoft.Insights/components', parameters('full').applicationInsights.name), '2014-04-01').InstrumentationKey]"
+                },
+                "isBuffered": true,
+                "resourceId": "[resourceId('Microsoft.Insights/components', parameters('full').applicationInsights.name)]"
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/diagnostics",
+            "apiVersion": "2019-01-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/applicationinsights')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('full').apiManagement.name, parameters('full').applicationInsights.name)]"
+            ],
+            "properties": {
+                "alwaysLog": "allErrors",
+                "httpCorrelationProtocol": "Legacy",
+                "logClientIp": true,
+                "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('full').apiManagement.name, parameters('full').applicationInsights.name)]",
+                "sampling": {
+                    "samplingType": "fixed",
+                    "percentage": 100
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ApiManagement/service/subscriptions",
+            "apiVersion": "2019-12-01",
+            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.subscriptions.azurePlatform)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name)]"
+            ],
+            "properties": {
+                "scope": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name), '/apis')]",
+                "displayName": "[parameters('full').apiManagement.subscriptions.azurePlatform]",
+                "state": "active",
+                "allowTracing": true
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+            "name": "[concat(parameters('full').keyVault.name, '/add')]",
+            "apiVersion": "2016-10-01",
+            "properties": {
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name), '2019-01-01', 'full').identity.principalId]",
+                        "permissions": {
+                            "secrets": [
+                                "get"
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

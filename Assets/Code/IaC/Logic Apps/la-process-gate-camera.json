@@ -1,0 +1,257 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('full').logicApps.processGateCamera.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "type": "Object"
+                        },
+                        "ApiManagementSubscriptionKey": {
+                            "type": "SecureString"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_resource_event_occurs": {
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnectionWebhook",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "destination": {
+                                            "endpointType": "webhook",
+                                            "properties": {
+                                                "endpointUrl": "@{listCallbackUrl()}"
+                                            }
+                                        },
+                                        "filter": {
+                                            "includedEventTypes": [
+                                                "Microsoft.Storage.BlobCreated"
+                                            ],
+                                            "subjectBeginsWith": "[concat('/blobServices/default/containers/', parameters('full').storageAccount.containers.gateCamera)]"
+                                        },
+                                        "topic": "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureeventgrid']['connectionId']"
+                                    }
+                                },
+                                "path": "[concat('/subscriptions/@{encodeURIComponent(''', subscription().subscriptionId, ''')}/providers/@{encodeURIComponent(''Microsoft.Storage.StorageAccounts'')}/resource/eventSubscriptions')]",
+                                "queries": {
+                                    "x-ms-api-version": "2017-06-15-preview"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Check_visitor_identified": {
+                            "actions": {
+                                "Get_visitor_details": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['commondataservice']['connectionId']"
+                                            }
+                                        },
+                                        "method": "get",
+                                        "path": "[concat('/v2/datasets/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.organization, '''))}/tables/@{encodeURIComponent(encodeURIComponent(''', parameters('full').commonDataService.entities.visitors.name, '''))}/items')]",
+                                        "queries": {
+                                            "$filter": "[concat(parameters('full').commonDataService.entities.visitors.fields.faceApiPersonId, ' eq ''@{body(''Identify'')[0]?[''candidates''][0]?[''personId'']}''')]"
+                                        }
+                                    }
+                                },
+                                "Send_message": {
+                                    "runAfter": {
+                                        "Get_visitor_details": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "ContentData": "[concat('@{base64(concat(''{'',''\n'',''    \"name\": \"'',body(''Get_visitor_details'')?[''value''][0]?[''', parameters('full').commonDataService.entities.visitors.fields.name, '''],''\",'',''\n'',''    \"imageUrl\": \"'',body(''Create_SAS_URI_by_path'')?[''WebUrl''],''\",'',''\n'',''    \"securityCourseDone\": \"'',body(''Get_visitor_details'')?[''value''][0]?[''', parameters('full').commonDataService.entities.visitors.fields.securityCourseDone, '''],''\",'',''\n'',''    \"visits\": \"'',body(''Get_visitor_details'')?[''value''][0]?[''', parameters('full').commonDataService.entities.visitors.fields.visits, '''],''\"'',''\n'',''}''))}')]",
+                                            "ContentType": "application/json"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['servicebus']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "[concat('/@{encodeURIComponent(encodeURIComponent(''', parameters('full').serviceBus.queues.gateCamera, '''))}/messages')]",
+                                        "queries": {
+                                            "systemProperties": "None"
+                                        }
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Identify": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "greater": [
+                                            "@length(body('Identify'))",
+                                            0
+                                        ]
+                                    },
+                                    {
+                                        "greater": [
+                                            "@length(body('Identify')[0]?['candidates'])",
+                                            0
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Create_SAS_URI_by_path": {
+                            "runAfter": {
+                                "Filename": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "Permissions": "Read"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/default/CreateSharedLinkByPath",
+                                "queries": {
+                                    "path": "[concat('/', parameters('full').storageAccount.containers.gateCamera, '/@{variables(''Filename'')}')]"
+                                }
+                            }
+                        },
+                        "Detect_faces": {
+                            "runAfter": {
+                                "Create_SAS_URI_by_path": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "url": "@body('Create_SAS_URI_by_path')?['WebUrl']"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['faceapi']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/face/v1.0/detect",
+                                "queries": {
+                                    "returnFaceAttributes": "age,gender,headPose,smile,facialHair,glasses",
+                                    "returnFaceId": "true",
+                                    "returnFaceLandmarks": "true"
+                                }
+                            }
+                        },
+                        "Filename": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Filename",
+                                        "type": "string",
+                                        "value": "@{substring(triggerBody()?['subject'], add(lastIndexOf(triggerBody()?['subject'], '/'), 1))}"
+                                    }
+                                ]
+                            }
+                        },
+                        "Identify": {
+                            "runAfter": {
+                                "Detect_faces": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiManagement",
+                            "inputs": {
+                                "api": {
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+                                },
+                                "body": {
+                                    "confidenceThreshold": 0.5,
+                                    "faceIds": [
+                                        "@{body('Detect_faces')[0]?['faceId']}"
+                                    ],
+                                    "maxNumOfCandidatesReturned": 1,
+                                    "personGroupId": "[parameters('full').cognitiveServices.face.personGroupVisitors]"
+                                },
+                                "method": "post",
+                                "pathTemplate": {
+                                    "parameters": {},
+                                    "template": "[concat('/', parameters('full').apiManagement.apis.face.name, parameters('full').apiManagement.apis.face.operations.identify.urlTemplate)]"
+                                },
+                                "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
+                            }
+                        }
+                    }
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureblob": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.azureblob)]",
+                                "connectionName": "azureblob",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/azureblob')]"
+                            },
+                            "azureeventgrid": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.azureeventgrid)]",
+                                "connectionName": "azureeventgrid",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/azureeventgrid')]"
+                            },
+                            "commondataservice": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.commondataservice)]",
+                                "connectionName": "commondataservice",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/commondataservice')]"
+                            },
+                            "faceapi": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.faceapi)]",
+                                "connectionName": "faceapi",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/faceapi')]"
+                            },
+                            "servicebus": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('full').logicApps.apiConnections.servicebus)]",
+                                "connectionName": "servicebus",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('full').general.location, '/managedApis/servicebus')]"
+                            }
+                        }
+                    },
+                    "ApiManagementSubscriptionKey": {
+                        "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', parameters('full').apiManagement.name, parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                    }
+                },
+                "state": "Enabled"
+            }
+        }
+    ]
+}

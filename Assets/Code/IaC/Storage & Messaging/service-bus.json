@@ -1,0 +1,59 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[parameters('full').serviceBus.name]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "sku": {
+                "name": "[parameters('full').serviceBus.sku]",
+                "tier": "[parameters('full').serviceBus.sku]"
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('full').serviceBus.name, '/', parameters('full').serviceBus.queues.carCamera)]",
+            "location": "[parameters('full').general.location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('full').serviceBus.name)]"
+            ],
+            "properties": {
+                "deadLetteringOnMessageExpiration": true
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('full').serviceBus.name, '/', parameters('full').serviceBus.queues.gateCamera)]",
+            "location": "[parameters('full').general.location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('full').serviceBus.name)]"
+            ],
+            "properties": {
+                "deadLetteringOnMessageExpiration": true
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('full').serviceBus.name, '/', parameters('full').serviceBus.queues.departureCamera)]",
+            "location": "[parameters('full').general.location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('full').serviceBus.name)]"
+            ],
+            "properties": {
+                "deadLetteringOnMessageExpiration": true
+            }
+        }
+    ]
+}
