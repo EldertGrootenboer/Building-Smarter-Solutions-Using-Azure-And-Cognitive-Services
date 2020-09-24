@@ -7,7 +7,6 @@
             "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Sessions/master/Building%20Smarter%20Solutions%20Using%20Azure%20and%20Cognitive%20Services/code/iac"
         }
     },
-    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",

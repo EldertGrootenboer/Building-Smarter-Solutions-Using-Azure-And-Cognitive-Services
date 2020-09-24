@@ -172,7 +172,6 @@
                     }
                 },
                 "keyVault": {
-                    "adminObjectId": "2fe35e55-b3ac-4c86-a18f-97ef0dc4615d",
                     "name": "kv-cognitive-services",
                     "secrets": {
                         "faceApiSubscriptionKey": "faceApiSubscriptionKey",

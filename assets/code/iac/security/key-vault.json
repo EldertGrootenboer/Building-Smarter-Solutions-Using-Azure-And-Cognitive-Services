@@ -2,16 +2,38 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "administratorObjectId": {
+            "type": "string"
+        },
         "rdwApiSubscriptionKey": {
-            "type": "securestring",
-            "defaultValue": ""
+            "type": "securestring"
         },
         "servicePrincipalPasswordEventGridValue": {
-            "type": "securestring",
-            "defaultValue": ""
+            "type": "securestring"
         },
-        "full": {
-            "type": "object"
+        "keyVaultName": {
+            "type": "string",
+            "defaultValue": "kv-cognitive-services"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {
+                "CreationDate": "06-08-2020",
+                "Project": "Building Smarter Solutions Using Azure and Cognitive Services",
+                "Purpose": "Session"
+            }
+        },
+        "rdwApiSubscriptionKeySecretName": {
+            "type": "string",
+            "defaultValue": "rdwApiSubscriptionKey"
+        },
+        "servicePrincipalPasswordEventGridSecretName": {
+            "type": "string",
+            "defaultValue": "servicePrincipalPasswordEventGrid"
         }
     },
     "variables": {},
@@ -19,9 +41,9 @@
         {
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2016-10-01",
-            "name": "[parameters('full').keyVault.name]",
-            "location": "[parameters('full').general.location]",
-            "tags": "[parameters('full').general.tags]",
+            "name": "[parameters('keyVaultName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
             "properties": {
                 "sku": {
                     "family": "A",
@@ -31,7 +53,7 @@
                 "accessPolicies": [
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[parameters('full').keyVault.adminObjectId]",
+                        "objectId": "[parameters('administratorObjectId')]",
                         "permissions": {
                             "keys": [
                                 "Get",
@@ -82,9 +104,9 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('full').keyVault.name, '/', parameters('full').keyVault.secrets.rdwApiSubscriptionKey)]",
+            "name": "[concat(parameters('keyVaultName'), '/', parameters('rdwApiSubscriptionKeySecretName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('full').keyVault.name)]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
             ],
             "properties": {
                 "value": "[parameters('rdwApiSubscriptionKey')]",
@@ -96,9 +118,9 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('full').keyVault.name, '/', parameters('full').keyVault.secrets.servicePrincipalPasswordEventGrid)]",
+            "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalPasswordEventGridSecretName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('full').keyVault.name)]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
             ],
             "properties": {
                 "value": "[parameters('servicePrincipalPasswordEventGridValue')]",
