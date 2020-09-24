@@ -102,6 +102,7 @@
             }
         },
         {
+            "condition": "[not(empty(parameters('rdwApiSubscriptionKey')))]",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
             "name": "[concat(parameters('keyVaultName'), '/', parameters('rdwApiSubscriptionKeySecretName'))]",
@@ -116,6 +117,7 @@
             }
         },
         {
+            "condition": "[not(empty(parameters('servicePrincipalPasswordEventGridValue')))]",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
             "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalPasswordEventGridSecretName'))]",
