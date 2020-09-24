@@ -153,14 +153,14 @@
                 },
                 "functionApps": {
                     "licensePlateRecognizer": {
-                        "appServicePlan": "asp-license-plate-recognizer-",
+                        "appServicePlan": "asp-license-plate-recognizer",
                         "function": "LicensePlateRecognizer",
-                        "name": "fa-license-plate-recognizer"
+                        "name": "fa-license-plate-recognizer-"
                     },
                     "retrieveLatestModel": {
-                        "appServicePlan": "asp-retrieve-latest-model-",
+                        "appServicePlan": "asp-retrieve-latest-model",
                         "function": "RetrieveLatestModel",
-                        "name": "fa-retrieve-latest-model"
+                        "name": "fa-retrieve-latest-model-"
                     }
                 },
                 "general": {
