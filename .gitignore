@@ -349,6 +349,6 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-Assets/Assets/Demo/Demo 2 - Gate arrival/RTT Cockpit/RTTCockpit.exe.config
-Assets/Code/Bot/appsettings.json
-Assets/Code/Functions/Retrieve Latest Model/local.settings.json
+assets/demo/demo-2-gate-arrival/rtt-cockpit/RTTCockpit.exe.config
+assets/code/bot/appsettings.json
+assets/code/functions/retrieve-latest-model/local.settings.json
