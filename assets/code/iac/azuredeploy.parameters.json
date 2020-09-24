@@ -85,7 +85,7 @@
                     "publisherName": "EPH",
                     "sku": "Developer",
                     "subscriptions": {
-                        "azurePlatform": "building-smarter-solutions-using-cognitive-services"
+                        "azurePlatform": "building-smarter-solutions"
                     }
                 },
                 "appServices": {
@@ -96,7 +96,7 @@
                     }
                 },
                 "applicationInsights": {
-                    "name": "ai-building-smarter-solutions-using-cognitive-services"
+                    "name": "ai-building-smarter-solutions"
                 },
                 "cognitiveServices": {
                     "computerVision": {
@@ -182,7 +182,7 @@
                     }
                 },
                 "logAnalytics": {
-                    "name": "loga-building-smarter-solutions-using-cognitive-services",
+                    "name": "loga-building-smarter-solutions",
                     "sku": "free"
                 },
                 "logicApps": {
@@ -213,7 +213,7 @@
                     }
                 },
                 "serviceBus": {
-                    "name": "sb-smarter-solutions-using-cognitive-services",
+                    "name": "sb-smarter-solutions",
                     "queues": {
                         "carCamera": "car-camera",
                         "departureCamera": "departure-camera",
