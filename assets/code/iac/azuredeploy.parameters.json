@@ -172,7 +172,7 @@
                     }
                 },
                 "keyVault": {
-                    "name": "kv-cognitive-services",
+                    "name": "kv-",
                     "secrets": {
                         "faceApiSubscriptionKey": "faceApiSubscriptionKey",
                         "formApiRecognizerSubscriptionKey": "formApiRecognizerSubscriptionKey",

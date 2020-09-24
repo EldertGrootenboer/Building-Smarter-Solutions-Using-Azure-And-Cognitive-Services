@@ -45,8 +45,8 @@ Invoke-Expression "$basePath\assets\code\bot\Scripts\deployment.ps1"
 New-AzResourceGroupDeployment -Name "BuildSmarterSolutions2" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.2.json"
 
 # Optional for debugging, loops through each local file individually
-#Get-ChildItem "$basePath\assets\code\iac" -Filter *.json | 
+#Get-ChildItem "$basePath\assets\code\iac" -Recurse -Filter *.json | 
 #Foreach-Object {
 #    Write-Output "Deploying: " $_.FullName
-#    New-AzResourceGroupDeployment -Name Demo -ResourceGroupName $resourceGroupName -TemplateFile $_.FullName -ErrorAction Continue
+#    New-AzResourceGroupDeployment -Name Demo -ResourceGroupName $resourceGroupName -TemplateFile $_.FullName -TemplateParameterFile "$basePath\assets\code\iac\azuredeploy.parameters.json" -ErrorAction Continue
 #}
