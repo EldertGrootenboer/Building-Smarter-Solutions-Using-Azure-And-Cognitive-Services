@@ -8,7 +8,6 @@
     },
     "variables": {
         "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
-        "faceApiName": "[concat(parameters('full').apiManagement.apis.face.name, uniqueString(resourceGroup().name))]",
         "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
@@ -150,14 +149,14 @@
                             "type": "ApiManagement",
                             "inputs": {
                                 "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('faceApiName'))]"
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.face.name)]"
                                 },
                                 "method": "post",
                                 "pathTemplate": {
                                     "parameters": {
                                         "personGroupId": "[concat('@{encodeURIComponent(''', parameters('full').cognitiveServices.face.personGroupVisitors, ''')}')]"
                                     },
-                                    "template": "[concat('/', variables('faceApiName'), parameters('full').apiManagement.apis.face.operations.train.urlTemplate)]"
+                                    "template": "[concat('/', parameters('full').apiManagement.apis.face.name, parameters('full').apiManagement.apis.face.operations.train.urlTemplate)]"
                                 },
                                 "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
                             }

@@ -8,7 +8,6 @@
     },
     "variables": {
         "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
-        "faceApiName": "[concat(parameters('full').apiManagement.apis.face.name, uniqueString(resourceGroup().name))]",
         "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
@@ -201,7 +200,7 @@
                             "type": "ApiManagement",
                             "inputs": {
                                 "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('faceApiName'))]"
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.face.name)]"
                                 },
                                 "body": {
                                     "confidenceThreshold": 0.5,
@@ -214,7 +213,7 @@
                                 "method": "post",
                                 "pathTemplate": {
                                     "parameters": {},
-                                    "template": "[concat('/', variables('faceApiName'), parameters('full').apiManagement.apis.face.operations.identify.urlTemplate)]"
+                                    "template": "[concat('/', parameters('full').apiManagement.apis.face.name, parameters('full').apiManagement.apis.face.operations.identify.urlTemplate)]"
                                 },
                                 "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
                             }
