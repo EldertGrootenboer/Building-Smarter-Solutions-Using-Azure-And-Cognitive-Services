@@ -8,19 +8,18 @@
     },
     "variables": {
         "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
-        "formRecognizer": "[concat(parameters('full').apiManagement.apis.formRecognizer.name, uniqueString(resourceGroup().name))]",
         "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
         {
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2019-12-01",
-            "name": "[concat(variables('apiManagementName'), '/', variables('formRecognizer'))]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.formRecognizer.name)]",
             "properties": {
                 "displayName": "[parameters('full').apiManagement.apis.formRecognizer.displayName]",
                 "subscriptionRequired": true,
                 "serviceUrl": "[parameters('full').apiManagement.apis.formRecognizer.serviceUrl]",
-                "path": "[variables('formRecognizer')]",
+                "path": "[parameters('full').apiManagement.apis.formRecognizer.name]",
                 "protocols": [
                     "https"
                 ],
@@ -30,9 +29,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(variables('apiManagementName'), '/', variables('formRecognizer'), '/', parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.formRecognizer.name, '/', parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('formRecognizer'))]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.formRecognizer.name)]"
             ],
             "properties": {
                 "displayName": "Analyze Form",
@@ -161,9 +160,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(variables('apiManagementName'), '/', variables('formRecognizer'), '/', parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.formRecognizer.name, '/', parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('formRecognizer'))]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.formRecognizer.name)]"
             ],
             "properties": {
                 "displayName": "Get Analyze Form Result",
@@ -236,9 +235,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(variables('apiManagementName'), '/', variables('formRecognizer'), '/', parameters('full').apiManagement.apis.formRecognizer.operations.listCustomModels.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.formRecognizer.name, '/', parameters('full').apiManagement.apis.formRecognizer.operations.listCustomModels.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('formRecognizer'))]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.formRecognizer.name)]"
             ],
             "properties": {
                 "displayName": "List Custom Models",
@@ -290,9 +289,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/policies",
             "apiVersion": "2019-01-01",
-            "name": "[concat(variables('apiManagementName'), '/', variables('formRecognizer'), '/policy')]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.formRecognizer.name, '/policy')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('formRecognizer'))]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.formRecognizer.name)]"
             ],
             "properties": {
                 "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', variables('keyVaultName'), '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.formApiRecognizerSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"formApiRecognizerSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"formApiRecognizerSubscriptionKey\"])</value>\r\n        </set-header>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",

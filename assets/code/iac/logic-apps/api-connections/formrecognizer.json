@@ -6,7 +6,9 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "formRecognizer": "[concat(parameters('full').cognitiveServices.formRecognizer.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Web/connections",
@@ -15,7 +17,7 @@
             "location": "[parameters('full').general.location]",
             "properties": {
                 "parameterValues": {
-                    "api_key": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('full').cognitiveServices.formRecognizer.name), '2017-04-18').key1]",
+                    "api_key": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizer')), '2017-04-18').key1]",
                     "siteUrl": "[parameters('full').cognitiveServices.formRecognizer.siteUrl]"
                 },
                 "api": {

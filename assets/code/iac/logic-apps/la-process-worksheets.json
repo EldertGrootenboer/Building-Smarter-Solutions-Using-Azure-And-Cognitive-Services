@@ -8,7 +8,6 @@
     },
     "variables": {
         "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
-        "formRecognizer": "[concat(parameters('full').apiManagement.apis.formRecognizer.name, uniqueString(resourceGroup().name))]",
         "functionAppRetrieveLatestModelName": "[concat(parameters('full').functionApps.retrieveLatestModel.name, uniqueString(resourceGroup().name))]",
         "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]"
     },
@@ -75,7 +74,7 @@
                             "type": "ApiManagement",
                             "inputs": {
                                 "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('formRecognizer'))]"
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.formRecognizer.name)]"
                                 },
                                 "body": {
                                     "source": "@{body('Create_SAS_URI_by_path')?['WebUrl']}"
@@ -85,7 +84,7 @@
                                     "parameters": {
                                         "modelId": "[concat('@{encodeURIComponent(body(''', parameters('full').functionApps.retrieveLatestModel.function, '''))}')]"
                                     },
-                                    "template": "[concat('/', variables('formRecognizer'), parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.urlTemplate)]"
+                                    "template": "[concat('/', parameters('full').apiManagement.apis.formRecognizer.name, parameters('full').apiManagement.apis.formRecognizer.operations.analyzeForm.urlTemplate)]"
                                 },
                                 "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
                             }
@@ -300,7 +299,7 @@
                                     "type": "ApiManagement",
                                     "inputs": {
                                         "api": {
-                                            "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('formRecognizer'))]"
+                                            "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.formRecognizer.name)]"
                                         },
                                         "method": "get",
                                         "pathTemplate": {
@@ -308,7 +307,7 @@
                                                 "modelId": "@{encodeURIComponent(body('RetrieveLatestModel'))}",
                                                 "resultId": "@{encodeURIComponent(variables('Result Id'))}"
                                             },
-                                            "template": "[concat('/', variables('formRecognizer'), parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.urlTemplate)]"
+                                            "template": "[concat('/', parameters('full').apiManagement.apis.formRecognizer.name, parameters('full').apiManagement.apis.formRecognizer.operations.analyzeFormResults.urlTemplate)]"
                                         },
                                         "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
                                     }
