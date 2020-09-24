@@ -7,17 +7,20 @@
         }
     },
     "variables": {
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "faceApiName": "[concat(parameters('full').apiManagement.apis.face.name, uniqueString(resourceGroup().name))]",
+        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
         {
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('faceApiName'))]",
             "properties": {
                 "displayName": "[parameters('full').apiManagement.apis.face.displayName]",
                 "subscriptionRequired": true,
                 "serviceUrl": "[parameters('full').apiManagement.apis.face.serviceUrl]",
-                "path": "[parameters('full').apiManagement.apis.face.name]",
+                "path": "[variables('faceApiName')]",
                 "protocols": [
                     "https"
                 ],
@@ -27,9 +30,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name, '/', parameters('full').apiManagement.apis.face.operations.identify.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('faceApiName'), '/', parameters('full').apiManagement.apis.face.operations.identify.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('faceApiName'))]"
             ],
             "properties": {
                 "displayName": "Face - Identify",
@@ -130,9 +133,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name, '/', parameters('full').apiManagement.apis.face.operations.train.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('faceApiName'), '/', parameters('full').apiManagement.apis.face.operations.train.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('faceApiName'))]"
             ],
             "properties": {
                 "displayName": "PersonGroup - Train",
@@ -221,12 +224,12 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/policies",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.face.name, '/policy')]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('faceApiName'), '/policy')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('faceApiName'))]"
             ],
             "properties": {
-                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', parameters('full').keyVault.name, '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.faceApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"faceApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"faceApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', variables('keyVaultName'), '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.faceApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"faceApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"faceApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
                 "format": "rawxml"
             }
         }

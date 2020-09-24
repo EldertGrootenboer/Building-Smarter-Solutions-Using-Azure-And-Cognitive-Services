@@ -7,7 +7,9 @@
         }
     },
     "variables": {
-        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+        "functionAppLicensePlateRecognizerName": "[concat(parameters('full').functionApps.licensePlateRecognizer.name, uniqueString(resourceGroup().name))]",
+        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]",
+        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
     },
     "resources": [
         {
@@ -28,7 +30,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
-            "name": "[parameters('full').functionApps.licensePlateRecognizer.name]",
+            "name": "[]",
             "location": "[parameters('full').general.location]",
             "tags": "[parameters('full').general.tags]",
             "kind": "functionapp",
@@ -41,15 +43,15 @@
                     "appSettings": [
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('full').storageAccount.name, ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('full').storageAccount.name, ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(parameters('full').functionApps.licensePlateRecognizer.name)]"
+                            "value": "[toLower(variables('functionAppLicensePlateRecognizerName'))]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",

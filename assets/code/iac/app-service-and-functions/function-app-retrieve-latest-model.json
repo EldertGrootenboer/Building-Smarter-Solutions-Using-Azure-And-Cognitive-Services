@@ -7,7 +7,10 @@
         }
     },
     "variables": {
-        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "functionAppRetrieveLatestModelName": "[concat(parameters('full').functionApps.retrieveLatestModel.name, uniqueString(resourceGroup().name))]",
+        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]",
+        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
     },
     "resources": [
         {
@@ -28,7 +31,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2018-11-01",
-            "name": "[parameters('full').functionApps.retrieveLatestModel.name]",
+            "name": "[variables('functionAppRetrieveLatestModelName')]",
             "location": "[parameters('full').general.location]",
             "tags": "[parameters('full').general.tags]",
             "kind": "functionapp",
@@ -41,15 +44,15 @@
                     "appSettings": [
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('full').storageAccount.name, ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('full').storageAccount.name, ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(parameters('full').functionApps.retrieveLatestModel.name)]"
+                            "value": "[toLower(variables('functionAppRetrieveLatestModelName'))]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -69,7 +72,7 @@
                         },
                         {
                             "name": "ApimSubscriptionKey",
-                            "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', parameters('full').apiManagement.name, parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                            "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', variables('apiManagementName'), parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
                         }
                     ]
                 }

@@ -6,12 +6,14 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "name": "[parameters('full').storageAccount.name]",
+            "name": "[variables('storageAccountName')]",
             "location": "[parameters('full').general.location]",
             "tags": "[parameters('full').general.tags]",
             "sku": {
@@ -44,9 +46,9 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('full').storageAccount.name, '/default')]",
+            "name": "[concat(variables('storageAccountName'), '/default')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "sku": {
                 "name": "Standard_LRS",
@@ -87,10 +89,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.carCamera)]",
+            "name": "[concat(variables('storageAccountName'), '/default/', parameters('full').storageAccount.containers.carCamera)]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "properties": {
                 "publicAccess": "None"
@@ -99,10 +101,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.departureCamera)]",
+            "name": "[concat(variables('storageAccountName'), '/default/', parameters('full').storageAccount.containers.departureCamera)]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "properties": {
                 "publicAccess": "None"
@@ -111,10 +113,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.gateCamera)]",
+            "name": "[concat(variables('storageAccountName'), '/default/', parameters('full').storageAccount.containers.gateCamera)]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "properties": {
                 "publicAccess": "None"
@@ -123,10 +125,10 @@
         {
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('full').storageAccount.name, '/default/', parameters('full').storageAccount.containers.visitorPictures)]",
+            "name": "[concat(variables('storageAccountName'), '/default/', parameters('full').storageAccount.containers.visitorPictures)]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('full').storageAccount.name, 'default')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
             ],
             "properties": {
                 "publicAccess": "None"

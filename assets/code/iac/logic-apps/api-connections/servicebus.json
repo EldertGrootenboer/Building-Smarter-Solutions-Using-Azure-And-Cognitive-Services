@@ -6,7 +6,9 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "serviceBusNamespaceName": "[concat(parameters('full').serviceBus.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Web/connections",
@@ -15,7 +17,7 @@
             "location": "[parameters('full').general.location]",
             "properties": {
                 "parameterValues": {
-                    "connectionString": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('full').serviceBus.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
+                    "connectionString": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespaceName'), 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
                 },
                 "api": {
                     "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('full').general.location, 'servicebus')]"

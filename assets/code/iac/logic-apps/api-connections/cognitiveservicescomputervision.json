@@ -6,7 +6,9 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "computerVisionName": "[concat(parameters('full').cognitiveServices.computerVision.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Web/connections",
@@ -15,7 +17,7 @@
             "location": "[parameters('full').general.location]",
             "properties": {
                 "parameterValues": {
-                    "apiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('full').cognitiveServices.computerVision.name), '2017-04-18').key1]",
+                    "apiKey": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('computerVisionName')), '2017-04-18').key1]",
                     "siteUrl": "[parameters('full').cognitiveServices.computerVision.siteUrl]"
                 },
                 "api": {

@@ -6,12 +6,14 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "computerVisionName": "[concat(parameters('full').cognitiveServices.computerVision.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "2017-04-18",
-            "name": "[parameters('full').cognitiveServices.computerVision.name]",
+            "name": "[variables('computerVisionName')]",
             "location": "[parameters('full').general.location]",
             "tags": "[parameters('full').general.tags]",
             "sku": {
@@ -19,7 +21,7 @@
             },
             "kind": "ComputerVision",
             "properties": {
-                "customSubDomainName": "[parameters('full').cognitiveServices.computerVision.name]",
+                "customSubDomainName": "[variables('computerVisionName')]",
                 "publicNetworkAccess": "Enabled"
             }
         }

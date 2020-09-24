@@ -6,6 +6,11 @@
             "type": "object"
         }
     },
+    "variables": {
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "faceApiName": "[concat(parameters('full').apiManagement.apis.face.name, uniqueString(resourceGroup().name))]",
+        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Logic/workflows",
@@ -44,7 +49,7 @@
                                             ],
                                             "subjectBeginsWith": "[concat('/blobServices/default/containers/', parameters('full').storageAccount.containers.gateCamera)]"
                                         },
-                                        "topic": "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                                        "topic": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
                                     }
                                 },
                                 "host": {
@@ -196,7 +201,7 @@
                             "type": "ApiManagement",
                             "inputs": {
                                 "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.face.name)]"
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('faceApiName'))]"
                                 },
                                 "body": {
                                     "confidenceThreshold": 0.5,
@@ -209,7 +214,7 @@
                                 "method": "post",
                                 "pathTemplate": {
                                     "parameters": {},
-                                    "template": "[concat('/', parameters('full').apiManagement.apis.face.name, parameters('full').apiManagement.apis.face.operations.identify.urlTemplate)]"
+                                    "template": "[concat('/', variables('faceApiName'), parameters('full').apiManagement.apis.face.operations.identify.urlTemplate)]"
                                 },
                                 "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
                             }
@@ -247,7 +252,7 @@
                         }
                     },
                     "ApiManagementSubscriptionKey": {
-                        "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', parameters('full').apiManagement.name, parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                        "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', variables('apiManagementName'), parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
                     }
                 },
                 "state": "Enabled"

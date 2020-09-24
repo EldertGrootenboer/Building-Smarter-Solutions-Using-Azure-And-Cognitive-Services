@@ -6,7 +6,9 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.CognitiveServices/accounts",
@@ -26,7 +28,7 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('full').keyVault.name, '/', parameters('full').keyVault.secrets.faceApiSubscriptionKey)]",
+            "name": "[concat(variables('keyVaultName'), '/', parameters('full').keyVault.secrets.faceApiSubscriptionKey)]",
             "properties": {
                 "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',parameters('full').cognitiveServices.face.name),'2017-04-18').key1]",
                 "attributes": {

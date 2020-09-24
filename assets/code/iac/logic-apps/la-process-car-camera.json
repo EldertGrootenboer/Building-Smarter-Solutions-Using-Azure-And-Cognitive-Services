@@ -6,6 +6,12 @@
             "type": "object"
         }
     },
+    "variables": {
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "functionAppLicensePlateRecognizerName": "[concat(parameters('full').functionApps.licensePlateRecognizer.name, uniqueString(resourceGroup().name))]",
+        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]",
+        "translatorApiName": "[concat(parameters('full').apiManagement.apis.translator.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Logic/workflows",
@@ -46,7 +52,7 @@
                                             ],
                                             "subjectBeginsWith": "[concat('/blobServices/default/containers/', parameters('full').storageAccount.containers.carCamera)]"
                                         },
-                                        "topic": "[resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name)]"
+                                        "topic": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
                                     }
                                 },
                                 "host": {
@@ -91,7 +97,7 @@
                                 "Translate_fuel_type": {
                                     "inputs": {
                                         "api": {
-                                            "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.translator.name)]"
+                                            "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('translatorApiName'))]"
                                         },
                                         "body": [
                                             {
@@ -101,7 +107,7 @@
                                         "method": "post",
                                         "pathTemplate": {
                                             "parameters": {},
-                                            "template": "[concat('/', parameters('full').apiManagement.apis.translator.name, parameters('full').apiManagement.apis.translator.urlTemplate)]"
+                                            "template": "[concat('/', variables('translatorApiName'), parameters('full').apiManagement.apis.translator.urlTemplate)]"
                                         },
                                         "queries": {
                                             "from": "nl",
@@ -181,7 +187,7 @@
                             "type": "ApiManagement",
                             "inputs": {
                                 "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
                                 },
                                 "method": "get",
                                 "pathTemplate": {
@@ -203,7 +209,7 @@
                             "type": "ApiManagement",
                             "inputs": {
                                 "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
                                 },
                                 "method": "get",
                                 "pathTemplate": {
@@ -226,7 +232,7 @@
                             "inputs": {
                                 "body": "@body('Optical_Character_Recognition_(OCR)_to_JSON')",
                                 "function": {
-                                    "id": "[resourceId('Microsoft.Web/sites/functions', parameters('full').functionApps.licensePlateRecognizer.name,  parameters('full').functionApps.licensePlateRecognizer.function)]"
+                                    "id": "[resourceId('Microsoft.Web/sites/functions', variables('functionAppLicensePlateRecognizerName'),  parameters('full').functionApps.licensePlateRecognizer.function)]"
                                 },
                                 "method": "POST"
                             }
@@ -284,7 +290,7 @@
                         }
                     },
                     "ApiManagementSubscriptionKey": {
-                        "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', parameters('full').apiManagement.name, parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                        "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', variables('apiManagementName'), parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
                     }
                 },
                 "state": "Enabled"

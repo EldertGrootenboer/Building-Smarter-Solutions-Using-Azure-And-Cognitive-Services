@@ -6,12 +6,15 @@
             "type": "object"
         }
     },
-    "variables": {},
+    "variables": {
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.ApiManagement/service",
             "apiVersion": "2019-01-01",
-            "name": "[parameters('full').apiManagement.name]",
+            "name": "[variables('apiManagementName')]",
             "location": "[parameters('full').general.location]",
             "tags": "[parameters('full').general.tags]",
             "sku": {
@@ -29,9 +32,9 @@
         {
             "type": "Microsoft.ApiManagement/service/loggers",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').applicationInsights.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').applicationInsights.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name)]"
+                "[resourceId('Microsoft.ApiManagement/service', variables('apiManagementName'))]"
             ],
             "properties": {
                 "loggerType": "applicationInsights",
@@ -45,16 +48,16 @@
         {
             "type": "Microsoft.ApiManagement/service/diagnostics",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/applicationinsights')]",
+            "name": "[concat(variables('apiManagementName'), '/applicationinsights')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name)]",
-                "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('full').apiManagement.name, parameters('full').applicationInsights.name)]"
+                "[resourceId('Microsoft.ApiManagement/service', variables('apiManagementName'))]",
+                "[resourceId('Microsoft.ApiManagement/service/loggers', variables('apiManagementName'), parameters('full').applicationInsights.name)]"
             ],
             "properties": {
                 "alwaysLog": "allErrors",
                 "httpCorrelationProtocol": "Legacy",
                 "logClientIp": true,
-                "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', parameters('full').apiManagement.name, parameters('full').applicationInsights.name)]",
+                "loggerId": "[resourceId('Microsoft.ApiManagement/service/loggers', variables('apiManagementName'), parameters('full').applicationInsights.name)]",
                 "sampling": {
                     "samplingType": "fixed",
                     "percentage": 100
@@ -64,12 +67,12 @@
         {
             "type": "Microsoft.ApiManagement/service/subscriptions",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.subscriptions.azurePlatform)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.subscriptions.azurePlatform)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name)]"
+                "[resourceId('Microsoft.ApiManagement/service', variables('apiManagementName'))]"
             ],
             "properties": {
-                "scope": "[concat(resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name), '/apis')]",
+                "scope": "[concat(resourceId('Microsoft.ApiManagement/service', variables('apiManagementName')), '/apis')]",
                 "displayName": "[parameters('full').apiManagement.subscriptions.azurePlatform]",
                 "state": "active",
                 "allowTracing": true
@@ -77,13 +80,13 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/accessPolicies",
-            "name": "[concat(parameters('full').keyVault.name, '/add')]",
+            "name": "[concat(variables('keyVaultName'), '/add')]",
             "apiVersion": "2016-10-01",
             "properties": {
                 "accessPolicies": [
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name), '2019-01-01', 'full').identity.principalId]",
+                        "objectId": "[reference(resourceId('Microsoft.ApiManagement/service', variables('apiManagementName')), '2019-01-01', 'full').identity.principalId]",
                         "permissions": {
                             "secrets": [
                                 "get"

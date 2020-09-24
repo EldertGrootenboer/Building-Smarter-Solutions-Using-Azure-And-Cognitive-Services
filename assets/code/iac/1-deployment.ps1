@@ -3,12 +3,12 @@
 #   2. Deploy Azure services
 
 ########## Set before deployment, do not save to repository ##########
-$rdwApiSubscriptionKey = ConvertTo-SecureString "" -AsPlainText -Force
+$rdwApiSubscriptionKey = ConvertTo-SecureString "&3sJJI9L&CxwS%=Dg'in""" -AsPlainText -Force
 ######################################################################
 
 # Update these according to the environment
 $subscriptionName = "Visual Studio Enterprise"
-$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services"
+$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services-6"
 $appRegistrationName = "sp-building-smarter-solutions-using-cognitive-services"
 $administratorEmail = "me@eldert.net"
 $basePath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"

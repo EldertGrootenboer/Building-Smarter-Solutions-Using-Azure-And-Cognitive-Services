@@ -7,6 +7,7 @@
         }
     },
     "variables": {
+        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
         {
@@ -16,8 +17,8 @@
             "location": "[parameters('full').general.location]",
             "properties": {
                 "parameterValues": {
-                    "accountName": "[parameters('full').storageAccount.name]",
-                    "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('full').storageAccount.name),'2015-05-01-preview').key1]"
+                    "accountName": "[variables('storageAccountName')]",
+                    "accessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1]"
                 },
                 "api": {
                     "id": "[subscriptionResourceId('Microsoft.Web/locations/managedApis', parameters('full').general.location, 'azureblob')]"

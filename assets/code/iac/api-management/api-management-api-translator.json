@@ -7,17 +7,20 @@
         }
     },
     "variables": {
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]",
+        "translatorApiName": "[concat(parameters('full').apiManagement.apis.translator.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
         {
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.translator.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('translatorApiName'))]",
             "properties": {
                 "displayName": "[parameters('full').apiManagement.apis.translator.displayName]",
                 "subscriptionRequired": true,
                 "serviceUrl": "[parameters('full').apiManagement.apis.translator.serviceUrl]",
-                "path": "[parameters('full').apiManagement.apis.translator.name]",
+                "path": "[variables('translatorApiName')]",
                 "protocols": [
                     "https"
                 ],
@@ -27,9 +30,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.translator.name, '/', parameters('full').apiManagement.apis.translator.operations.translate.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('translatorApiName'), '/', parameters('full').apiManagement.apis.translator.operations.translate.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.translator.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('translatorApiName'))]"
             ],
             "properties": {
                 "displayName": "Translate",
@@ -81,12 +84,12 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/policies",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.translator.name, '/policy')]",
+            "name": "[concat(variables('apiManagementName'), '/', variables('translatorApiName'), '/policy')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.translator.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), variables('translatorApiName'))]"
             ],
             "properties": {
-                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', parameters('full').keyVault.name, '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.translatorApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"translatorApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"translatorApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n        <set-header name=\"Ocp-Apim-Subscription-Region\" exists-action=\"override\">\r\n            <value>', parameters('full').general.location, '</value>\r\n        </set-header>\r\n        <set-header name=\"Content-Type\" exists-action=\"override\">\r\n            <value>application/json; charset=UTF-8</value>\r\n        </set-header>\r\n        <set-query-parameter name=\"api-version\" exists-action=\"override\">\r\n            <value>3.0</value>\r\n        </set-query-parameter>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', variables('keyVaultName'), '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.translatorApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"translatorApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"translatorApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n        <set-header name=\"Ocp-Apim-Subscription-Region\" exists-action=\"override\">\r\n            <value>', parameters('full').general.location, '</value>\r\n        </set-header>\r\n        <set-header name=\"Content-Type\" exists-action=\"override\">\r\n            <value>application/json; charset=UTF-8</value>\r\n        </set-header>\r\n        <set-query-parameter name=\"api-version\" exists-action=\"override\">\r\n            <value>3.0</value>\r\n        </set-query-parameter>\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
                 "format": "rawxml"
             }
         }

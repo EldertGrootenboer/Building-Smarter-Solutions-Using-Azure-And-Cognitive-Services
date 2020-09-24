@@ -6,11 +6,14 @@
             "type": "object"
         }
     },
+    "variables": {
+        "logAnalyticsName": "[concat(parameters('full').logAnalytics.name, uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "microsoft.operationalinsights/workspaces",
             "apiVersion": "2015-11-01-preview",
-            "name": "[parameters('full').logAnalytics.name]",
+            "name": "[variables('logAnalyticsName')]",
             "location": "[parameters('full').general.location]",
             "tags": "[parameters('full').general.tags]",
             "properties": {
@@ -23,16 +26,16 @@
         {
             "type": "Microsoft.OperationsManagement/solutions",
             "apiVersion": "2015-11-01-preview",
-            "name": "[concat('LogicAppsManagement(', parameters('full').logAnalytics.name, ')')]",
+            "name": "[concat('LogicAppsManagement(', variables('logAnalyticsName'), ')')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('microsoft.operationalinsights/workspaces', parameters('full').logAnalytics.name)]"
+                "[resourceId('microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
             ],
             "properties": {
-                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('full').logAnalytics.name)]"
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName'))]"
             },
             "plan": {
-                "name": "[concat('LogicAppsManagement(', parameters('full').logAnalytics.name, ')')]",
+                "name": "[concat('LogicAppsManagement(', variables('logAnalyticsName'), ')')]",
                 "product": "OMSGallery/LogicAppsManagement",
                 "promotionCode": "",
                 "publisher": "Microsoft"

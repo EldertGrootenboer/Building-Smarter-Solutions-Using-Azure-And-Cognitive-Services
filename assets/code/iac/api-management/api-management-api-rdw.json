@@ -7,12 +7,14 @@
         }
     },
     "variables": {
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
         {
             "type": "Microsoft.ApiManagement/service/apis",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.rdw.name)]",
             "properties": {
                 "displayName": "[parameters('full').apiManagement.apis.rdw.displayName]",
                 "subscriptionRequired": true,
@@ -27,9 +29,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
             ],
             "properties": {
                 "displayName": "Fuel Types",
@@ -66,9 +68,9 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations",
             "apiVersion": "2019-12-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.name)]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.name)]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
             ],
             "properties": {
                 "displayName": "Licensed Cars",
@@ -105,22 +107,22 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/policies",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/policy')]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.rdw.name, '/policy')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
             ],
             "properties": {
-                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', parameters('full').keyVault.name, '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.rdwApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"rdwApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"X-App-Token\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"rdwApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', variables('keyVaultName'), '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.rdwApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"rdwApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"X-App-Token\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"rdwApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
                 "format": "rawxml"
             }
         },
         {
             "type": "Microsoft.ApiManagement/service/apis/operations/policies",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name, '/policy')]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name, '/policy')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]",
-                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.fuelTypes.name)]"
             ],
             "properties": {
                 "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <rewrite-uri template=\"8ys7-d773.json?kenteken={licensePlateNumber}\" copy-unmatched-params=\"false\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
@@ -130,10 +132,10 @@
         {
             "type": "Microsoft.ApiManagement/service/apis/operations/policies",
             "apiVersion": "2019-01-01",
-            "name": "[concat(parameters('full').apiManagement.name, '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.name, '/policy')]",
+            "name": "[concat(variables('apiManagementName'), '/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.name, '/policy')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ApiManagement/service/apis', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name)]",
-                "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('full').apiManagement.name, parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.licensedCars.name)]"
+                "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]",
+                "[resourceId('Microsoft.ApiManagement/service/apis/operations', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.licensedCars.name)]"
             ],
             "properties": {
                 "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <rewrite-uri template=\"m9d7-ebf2.json?kenteken={licensePlateNumber}\" copy-unmatched-params=\"false\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
