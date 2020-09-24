@@ -100,27 +100,27 @@
                 },
                 "cognitiveServices": {
                     "computerVision": {
-                        "name": "cv-building-smarter-solutions-using-cognitive-services",
+                        "name": "cv-building-smarter-solutions",
                         "siteUrl": "https://westus.api.cognitive.microsoft.com",
                         "sku": "S1"
                     },
                     "face": {
-                        "name": "face-building-smarter-solutions-using-cognitive-services",
+                        "name": "face-building-smarter-solutions",
                         "personGroupVisitors": "visitors",
                         "siteUrl": "https://westus.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
                     "formRecognizer": {
-                        "name": "fr-building-smarter-solutions-using-cognitive-services",
+                        "name": "fr-building-smarter-solutions",
                         "siteUrl": "https://westus.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
                     "luis": {
-                        "name": "luis-building-smarter-solutions-using-cognitive-services",
+                        "name": "luis-building-smarter-solutions",
                         "sku": "S0"
                     },
                     "translator": {
-                        "name": "tl-building-smarter-solutions-using-cognitive-services",
+                        "name": "tl-building-smarter-solutions",
                         "sku": "S1"
                     }
                 },
