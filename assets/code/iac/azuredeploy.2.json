@@ -4,7 +4,7 @@
     "parameters": {
         "templatesBaseUri": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Sessions/master/Building%20Smarter%20Solutions%20Using%20Azure%20and%20Cognitive%20Services/code/iac"
+            "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services/master/assets/code/iac"
         }
     },
     "resources": [
@@ -18,7 +18,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/API Management/api-management-api-visitors.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/api-management/api-management-api-visitors.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -34,7 +34,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/azureblob.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/azureblob.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -50,7 +50,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/azureeventgrid.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/azureeventgrid.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -66,7 +66,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/cognitiveservicescomputervision.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/cognitiveservicescomputervision.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -82,7 +82,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/commondataservice.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/commondataservice.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -98,7 +98,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/faceapi.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/faceapi.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -114,7 +114,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/formrecognizer.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/formrecognizer.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -130,7 +130,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/office365.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/office365.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -146,7 +146,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/API Connections/servicebus.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/api-connections/servicebus.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -168,7 +168,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-car-camera.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/la-process-car-camera.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -191,7 +191,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-gate-camera.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/la-process-gate-camera.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -213,7 +213,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-visitor-pictures.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/la-process-visitor-pictures.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -234,7 +234,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-process-worksheets.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/la-process-worksheets.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
@@ -254,7 +254,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/Logic Apps/la-register-visitor.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/logic-apps/la-register-visitor.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {

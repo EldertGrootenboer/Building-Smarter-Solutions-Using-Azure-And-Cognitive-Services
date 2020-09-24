@@ -12,7 +12,7 @@
             "type": "securestring"
         },
         "templatesBaseUri": {
-            "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Sessions/master/Building%20Smarter%20Solutions%20Using%20Azure%20and%20Cognitive%20Services/code/iac",
+            "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services/master/assets/code/iac",
             "type": "string"
         }
     },
