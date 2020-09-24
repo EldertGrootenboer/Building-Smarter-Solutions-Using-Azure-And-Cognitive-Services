@@ -80,7 +80,7 @@
                             "serviceUrl": ""
                         }
                     },
-                    "name": "apim-smarter-solutions-using-cognitive-services",
+                    "name": "apim-building-smarter-solutions",
                     "publisherEmail": "eldert@eldert.net",
                     "publisherName": "EPH",
                     "sku": "Developer",
@@ -90,9 +90,9 @@
                 },
                 "appServices": {
                     "bot": {
-                        "appServicePlan": "asp-bot-smarter-solutions-cognitive-services",
+                        "appServicePlan": "asp-bot-building-smarter-solutions",
                         "microsoftAppId": "784a6d8e-cb98-472e-af3d-6c29b74601f1",
-                        "name": "bot-smarter-solutions-cognitive-services"
+                        "name": "bot-building-smarter-solutions"
                     }
                 },
                 "applicationInsights": {
