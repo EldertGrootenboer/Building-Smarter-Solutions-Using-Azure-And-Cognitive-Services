@@ -3,7 +3,6 @@
 #   2. Deploy Azure services
 
 ########## Set before deployment, do not save to repository ##########
-# If left empty, the corresponding secret will not be updated
 $rdwApiSubscriptionKey = ConvertTo-SecureString "" -AsPlainText -Force
 ######################################################################
 
