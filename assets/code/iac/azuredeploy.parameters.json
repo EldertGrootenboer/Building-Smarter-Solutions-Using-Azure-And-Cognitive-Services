@@ -80,7 +80,7 @@
                             "serviceUrl": ""
                         }
                     },
-                    "name": "apim-building-smarter-solutions",
+                    "name": "apim-building-smarter-solutions-",
                     "publisherEmail": "eldert@eldert.net",
                     "publisherName": "EPH",
                     "sku": "Developer",
@@ -100,27 +100,27 @@
                 },
                 "cognitiveServices": {
                     "computerVision": {
-                        "name": "cv-building-smarter-solutions",
+                        "name": "cv-building-smarter-solutions-",
                         "siteUrl": "https://westus.api.cognitive.microsoft.com",
                         "sku": "S1"
                     },
                     "face": {
-                        "name": "face-building-smarter-solutions",
+                        "name": "face-building-smarter-solutions-",
                         "personGroupVisitors": "visitors",
                         "siteUrl": "https://westus.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
                     "formRecognizer": {
-                        "name": "fr-building-smarter-solutions",
+                        "name": "fr-building-smarter-solutions-",
                         "siteUrl": "https://westus.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
                     "luis": {
-                        "name": "luis-building-smarter-solutions",
+                        "name": "luis-building-smarter-solutions-",
                         "sku": "S0"
                     },
                     "translator": {
-                        "name": "tl-building-smarter-solutions",
+                        "name": "tl-building-smarter-solutions-",
                         "sku": "S1"
                     }
                 },
@@ -153,12 +153,12 @@
                 },
                 "functionApps": {
                     "licensePlateRecognizer": {
-                        "appServicePlan": "asp-license-plate-recognizer",
+                        "appServicePlan": "asp-license-plate-recognizer-",
                         "function": "LicensePlateRecognizer",
                         "name": "fa-license-plate-recognizer"
                     },
                     "retrieveLatestModel": {
-                        "appServicePlan": "asp-retrieve-latest-model",
+                        "appServicePlan": "asp-retrieve-latest-model-",
                         "function": "RetrieveLatestModel",
                         "name": "fa-retrieve-latest-model"
                     }
@@ -182,7 +182,7 @@
                     }
                 },
                 "logAnalytics": {
-                    "name": "loga-building-smarter-solutions",
+                    "name": "loga-building-smarter-solutions-",
                     "sku": "free"
                 },
                 "logicApps": {
@@ -213,7 +213,7 @@
                     }
                 },
                 "serviceBus": {
-                    "name": "sb-smarter-solutions",
+                    "name": "sb-smarter-solutions-",
                     "queues": {
                         "carCamera": "car-camera",
                         "departureCamera": "departure-camera",
