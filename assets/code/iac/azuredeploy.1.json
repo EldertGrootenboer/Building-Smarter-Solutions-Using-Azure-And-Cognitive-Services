@@ -167,6 +167,25 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
+            "name": "apiManagementApiTranslator",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'apiManagement')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/api-management/api-management-api-translator.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
             "name": "functionAppLicensePlateRecognizer",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]",
@@ -261,6 +280,22 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "uri": "[concat(parameters('templatesBaseUri'), '/cognitive-services/luis.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "cognitiveServiceTranslator",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/cognitive-services/translator.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
