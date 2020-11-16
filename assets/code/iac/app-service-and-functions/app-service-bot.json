@@ -81,9 +81,6 @@
                             "location": "[parameters('full').general.location]",
                             "tags": "[parameters('full').general.tags]",
                             "kind": "app",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/serverfarms', parameters('full').appServices.bot.appServicePlan)]"
-                            ],
                             "properties": {
                                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('full').appServices.bot.appServicePlan)]",
                                 "siteConfig": {
