@@ -121,7 +121,7 @@
                                     }
                                 },
                                 "method": "delete",
-                                "path": "[concat('/datasets/default/files/@{encodeURIComponent(encodeURIComponent(''/', parameters('full').storageAccount.containers.visitorPictures, '/'',variables(''Visitor'')))}')]"
+                                "path": "[concat('/datasets/default/files/@{encodeURIComponent(encodeURIComponent(''/', parameters('full').storageAccount.containers.visitorPictures, '/'', substring(triggerBody()?[''subject''], add(lastIndexOf(triggerBody()?[''subject''], ''/''), 1))))}')]"
                             }
                         },
                         "Face_API_Person_ID": {
