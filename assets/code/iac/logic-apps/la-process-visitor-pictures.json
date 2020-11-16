@@ -103,7 +103,7 @@
                                 "method": "post",
                                 "path": "/datasets/default/CreateSharedLinkByPath",
                                 "queries": {
-                                    "path": "[concat('/', parameters('full').storageAccount.containers.visitorPictures, '/@{variables(''Visitor'')}')]"
+                                    "path": "[concat('/', parameters('full').storageAccount.containers.visitorPictures, '/@{substring(triggerBody()?[''subject''], add(lastIndexOf(triggerBody()?[''subject''], ''/''), 1))}')]"
                                 }
                             }
                         },
