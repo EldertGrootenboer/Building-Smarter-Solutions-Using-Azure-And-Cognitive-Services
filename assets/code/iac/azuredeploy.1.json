@@ -114,25 +114,6 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
-            "name": "appServiceBot",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'keyVault')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/app-service-and-functions/app-service-bot.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parametersLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
-                    "contentVersion": "1.0.0.0"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
             "name": "apiManagement",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]",
