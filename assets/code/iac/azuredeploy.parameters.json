@@ -167,7 +167,7 @@
                     }
                 },
                 "keyVault": {
-                    "name": "kv-",
+                    "name": "kv1-",
                     "secrets": {
                         "faceApiSubscriptionKey": "faceApiSubscriptionKey",
                         "formApiRecognizerSubscriptionKey": "formApiRecognizerSubscriptionKey",
