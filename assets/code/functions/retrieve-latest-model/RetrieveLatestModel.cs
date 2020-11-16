@@ -41,7 +41,7 @@ namespace EPH.Functions
 
             while (hasMore)
             {
-                HttpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("ApimSubscriptionKey"));
+                HttpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("FormRecognizerApiSubscriptionKey"));
                 var response = await HttpClient.GetAsync(url);
 
                 var stream = await response.Content.ReadAsStreamAsync();

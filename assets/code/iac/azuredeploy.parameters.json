@@ -128,10 +128,10 @@
                     "entities": {
                         "ships": {
                             "fields": {
-                                "email": "cr105_email",
-                                "shipName": "cr105_shipname"
+                                "email": "cr9d6_email",
+                                "shipName": "cr9d6_shipname"
                             },
-                            "name": "cr105_ships"
+                            "name": "cr9d6_ships"
                         },
                         "visitors": {
                             "fields": {
@@ -141,7 +141,7 @@
                                 "visitorId": "cr9d6_visitorid",
                                 "visits": "cr9d6_visits"
                             },
-                            "name": "cr105_visitors"
+                            "name": "cr9d6_visitors"
                         }
                     },
                     "organization": "org0b8d6c3a.crm4"

@@ -102,7 +102,7 @@
                                     "type": "ApiConnection",
                                     "inputs": {
                                         "body": {
-                                            "cr105_visits": "[concat('@{concat(triggerBody()?[''visitDate''], '' - '', triggerBody()?[''ship''], '' - '', triggerBody()?[''reason''], ''\r\n'', body(''Get_visitor'')?[''value'']?[0]?[''', parameters('full').commonDataService.entities.visitors.fields.visits, '''])}')]"
+                                            "cr9d6_visits": "[concat('@{concat(triggerBody()?[''visitDate''], '' - '', triggerBody()?[''ship''], '' - '', triggerBody()?[''reason''], ''\r\n'', body(''Get_visitor'')?[''value'']?[0]?[''', parameters('full').commonDataService.entities.visitors.fields.visits, '''])}')]"
                                         },
                                         "host": {
                                             "connection": {
@@ -128,10 +128,10 @@
                                                 "type": "ApiConnection",
                                                 "inputs": {
                                                     "body": {
-                                                        "cr105_email": "@triggerBody()?['email']",
-                                                        "cr105_name": "@triggerBody()?['visitor']",
-                                                        "cr105_securitycoursedone": false,
-                                                        "cr105_visits": "@{triggerBody()?['visitDate']} - @{triggerBody()?['ship']} - @{triggerBody()?['reason']}"
+                                                        "cr9d6_email": "@triggerBody()?['email']",
+                                                        "cr9d6_name": "@triggerBody()?['visitor']",
+                                                        "cr9d6_securitycoursedone": false,
+                                                        "cr9d6_visits": "@{triggerBody()?['visitDate']} - @{triggerBody()?['ship']} - @{triggerBody()?['reason']}"
                                                     },
                                                     "host": {
                                                         "connection": {

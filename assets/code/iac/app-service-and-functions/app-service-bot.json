@@ -102,6 +102,24 @@
                             }
                         },
                         {
+                            "apiVersion": "2018-07-12",
+                            "type": "Microsoft.BotService/botServices",
+                            "name": "[parameters('full').appServices.bot.name]",
+                            "location": "global",
+                            "kind": "sdk",
+                            "sku": {
+                                "name": "F0"
+                            },
+                            "properties": {
+                                "displayName": "[parameters('full').appServices.bot.name]",
+                                "endpoint": "[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('full').appServices.bot.name), '2018-11-01').defaultHostName, '/api/messages')]",
+                                "msaAppId": "[parameters('servicePrincipalClientId')]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Web/sites', parameters('full').appServices.bot.name)]"
+                            ]
+                        },
+                        {
                             "type": "microsoft.insights/components",
                             "apiVersion": "2018-05-01-preview",
                             "name": "[parameters('full').applicationInsights.name]",
