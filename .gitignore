@@ -352,3 +352,4 @@ MigrationBackup/
 assets/demo/demo-2-gate-arrival/rtt-cockpit/RTTCockpit.exe.config
 assets/code/bot/appsettings.json
 assets/code/functions/retrieve-latest-model/local.settings.json
+.vscode/settings.json
