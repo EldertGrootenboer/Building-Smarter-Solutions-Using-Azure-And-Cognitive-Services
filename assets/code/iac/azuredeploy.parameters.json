@@ -101,18 +101,18 @@
                 "cognitiveServices": {
                     "computerVision": {
                         "name": "cv-building-smarter-solutions-",
-                        "siteUrl": "https://westus.api.cognitive.microsoft.com",
+                        "siteUrl": "https://westeurope.api.cognitive.microsoft.com",
                         "sku": "S1"
                     },
                     "face": {
                         "name": "face-building-smarter-solutions-",
                         "personGroupVisitors": "visitors",
-                        "siteUrl": "https://westus.api.cognitive.microsoft.com",
+                        "siteUrl": "https://westeurope.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
                     "formRecognizer": {
                         "name": "fr-building-smarter-solutions-",
-                        "siteUrl": "https://westus.api.cognitive.microsoft.com",
+                        "siteUrl": "https://westeurope.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
                     "luis": {
