@@ -184,20 +184,19 @@
                                     "Succeeded"
                                 ]
                             },
-                            "type": "ApiManagement",
+                            "type": "Http",
                             "inputs": {
-                                "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
+                                "headers": {
+                                    "Ocp-Apim-Subscription-Key": "@parameters('ApiManagementSubscriptionKey')"
                                 },
-                                "method": "get",
-                                "pathTemplate": {
-                                    "parameters": {},
-                                    "template": "[concat('/', parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.licensedCars.path)]"
-                                },
+                                "method": "GET",
                                 "queries": {
-                                    "licensePlateNumber": "@{body('LicensePlateRecognizer')}"
+                                    "kenteken": "@{body('LicensePlateRecognizer')}"
                                 },
-                                "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
+                                "retryPolicy": {
+                                    "type": "none"
+                                },
+                                "uri": "[concat('https://', variables('apiManagementName'), '.azure-api.net/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.licensedCars.path)]"
                             }
                         },
                         "Get_fuel_information": {
@@ -206,20 +205,19 @@
                                     "Succeeded"
                                 ]
                             },
-                            "type": "ApiManagement",
+                            "type": "Http",
                             "inputs": {
-                                "api": {
-                                    "id": "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
+                                "headers": {
+                                    "Ocp-Apim-Subscription-Key": "@parameters('ApiManagementSubscriptionKey')"
                                 },
-                                "method": "get",
-                                "pathTemplate": {
-                                    "parameters": {},
-                                    "template": "[concat('/', parameters('full').apiManagement.apis.rdw.name, parameters('full').apiManagement.apis.rdw.operations.fuelTypes.path)]"
-                                },
+                                "method": "GET",
                                 "queries": {
-                                    "licensePlateNumber": "@{body('LicensePlateRecognizer')}"
+                                    "kenteken": "@{body('LicensePlateRecognizer')}"
                                 },
-                                "subscriptionKey": "@parameters('ApiManagementSubscriptionKey')"
+                                "retryPolicy": {
+                                    "type": "none"
+                                },
+                                "uri": "[concat('https://', variables('apiManagementName'), '.azure-api.net/', parameters('full').apiManagement.apis.rdw.name, '/', parameters('full').apiManagement.apis.rdw.operations.fuelTypes.path)]"
                             }
                         },
                         "LicensePlateRecognizer": {
