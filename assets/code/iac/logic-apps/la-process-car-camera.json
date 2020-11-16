@@ -107,7 +107,7 @@
                                         "method": "post",
                                         "pathTemplate": {
                                             "parameters": {},
-                                            "template": "[concat('/', variables('translatorApiName'), parameters('full').apiManagement.apis.translator.urlTemplate)]"
+                                            "template": "[concat('/', variables('translatorApiName'), parameters('full').apiManagement.apis.translator.operations.translate.urlTemplate)]"
                                         },
                                         "queries": {
                                             "from": "nl",
