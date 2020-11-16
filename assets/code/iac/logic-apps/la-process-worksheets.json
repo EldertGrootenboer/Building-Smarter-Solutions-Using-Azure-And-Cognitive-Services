@@ -214,7 +214,7 @@
                                 "method": "post",
                                 "path": "/datasets/default/CreateSharedLinkByPath",
                                 "queries": {
-                                    "path": "[concat('/@{parameters(''', parameters('full').storageAccount.containers.departureCamera, ''')}/@{variables(''Filename'')}')]"
+                                    "path": "[concat('/', parameters('full').storageAccount.containers.departureCamera, '/@{variables(''Filename'')}')]"
                                 }
                             }
                         },
