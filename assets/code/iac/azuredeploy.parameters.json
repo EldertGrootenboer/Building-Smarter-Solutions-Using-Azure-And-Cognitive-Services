@@ -38,7 +38,7 @@
                                     "urlTemplate": "/custom/models"
                                 }
                             },
-                            "serviceUrl": "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.0"
+                            "serviceUrl": "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1"
                         },
                         "rdw": {
                             "displayName": "RDW",
@@ -135,11 +135,11 @@
                         },
                         "visitors": {
                             "fields": {
-                                "faceApiPersonId": "new_faceapipersonid",
-                                "name": "cr105_name",
-                                "securityCourseDone": "cr105_securitycoursedone",
-                                "visitorId": "cr105_visitorid",
-                                "visits": "cr105_visits"
+                                "faceApiPersonId": "cr9d6_faceapipersonid",
+                                "name": "cr9d6_name",
+                                "securityCourseDone": "cr9d6_securitycoursedone",
+                                "visitorId": "cr9d6_visitorid",
+                                "visits": "cr9d6_visits"
                             },
                             "name": "cr105_visitors"
                         }
@@ -167,11 +167,10 @@
                     }
                 },
                 "keyVault": {
-                    "name": "kv1-",
+                    "name": "kv-",
                     "secrets": {
                         "faceApiSubscriptionKey": "faceApiSubscriptionKey",
                         "formApiRecognizerSubscriptionKey": "formApiRecognizerSubscriptionKey",
-                        "rdwApiSubscriptionKey": "rdwApiSubscriptionKey",
                         "servicePrincipalClientId": "servicePrincipalClientId",
                         "servicePrincipalPassword": "servicePrincipalPassword",
                         "translatorApiSubscriptionKey": "translatorApiSubscriptionKey"
