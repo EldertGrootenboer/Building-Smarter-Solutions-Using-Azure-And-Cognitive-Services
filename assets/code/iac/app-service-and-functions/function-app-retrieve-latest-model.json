@@ -7,7 +7,7 @@
         }
     },
     "variables": {
-        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+        "formRecognizer": "[concat(parameters('full').cognitiveServices.formRecognizer.name, uniqueString(resourceGroup().name))]",
         "functionAppRetrieveLatestModelName": "[concat(parameters('full').functionApps.retrieveLatestModel.name, uniqueString(resourceGroup().name))]",
         "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]",
         "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
@@ -71,8 +71,8 @@
                             "value": "1"
                         },
                         {
-                            "name": "ApimSubscriptionKey",
-                            "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', variables('apiManagementName'), parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                            "name": "formRecognizerApiSubscriptionKey",
+                            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizer')), '2017-04-18').key1]"
                         }
                     ]
                 }
