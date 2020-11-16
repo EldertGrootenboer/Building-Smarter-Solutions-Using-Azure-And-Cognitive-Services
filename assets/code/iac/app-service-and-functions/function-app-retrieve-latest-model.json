@@ -71,7 +71,7 @@
                             "value": "1"
                         },
                         {
-                            "name": "formRecognizerApiSubscriptionKey",
+                            "name": "FormRecognizerApiSubscriptionKey",
                             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizer')), '2017-04-18').key1]"
                         }
                     ]
