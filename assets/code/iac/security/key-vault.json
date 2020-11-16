@@ -8,7 +8,10 @@
         "rdwApiSubscriptionKey": {
             "type": "securestring"
         },
-        "servicePrincipalPasswordEventGridValue": {
+        "servicePrincipalClientIdValue": {
+            "type": "securestring"
+        },
+        "servicePrincipalPasswordValue": {
             "type": "securestring"
         },
         "keyVaultName": {
@@ -31,9 +34,13 @@
             "type": "string",
             "defaultValue": "rdwApiSubscriptionKey"
         },
-        "servicePrincipalPasswordEventGridSecretName": {
+        "servicePrincipalClientIdSecretName": {
             "type": "string",
-            "defaultValue": "servicePrincipalPasswordEventGrid"
+            "defaultValue": "servicePrincipalClientId"
+        },
+        "servicePrincipalPasswordSecretName": {
+            "type": "string",
+            "defaultValue": "servicePrincipalPassword"
         }
     },
     "variables": {},
@@ -116,15 +123,30 @@
             }
         },
         {
-            "condition": "[not(empty(parameters('servicePrincipalPasswordEventGridValue')))]",
+            "condition": "[not(empty(parameters('servicePrincipalClientIdValue')))]",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalPasswordEventGridSecretName'))]",
+            "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalClientIdSecretName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
             ],
             "properties": {
-                "value": "[parameters('servicePrincipalPasswordEventGridValue')]",
+                "value": "[parameters('servicePrincipalClientIdValue')]",
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "condition": "[not(empty(parameters('servicePrincipalPasswordValue')))]",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2016-10-01",
+            "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalPasswordSecretName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ],
+            "properties": {
+                "value": "[parameters('servicePrincipalPasswordValue')]",
                 "attributes": {
                     "enabled": true
                 }

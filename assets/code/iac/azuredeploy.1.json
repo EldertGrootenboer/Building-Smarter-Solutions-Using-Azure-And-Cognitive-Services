@@ -8,7 +8,10 @@
         "rdwApiSubscriptionKey": {
             "type": "securestring"
         },
-        "servicePrincipalPasswordEventGridValue": {
+        "servicePrincipalClientIdValue": {
+            "type": "securestring"
+        },
+        "servicePrincipalPasswordValue": {
             "type": "securestring"
         },
         "templatesBaseUri": {
@@ -35,9 +38,28 @@
                     "rdwApiSubscriptionKey": {
                         "value": "[parameters('rdwApiSubscriptionKey')]"
                     },
-                    "servicePrincipalPasswordEventGridValue": {
-                        "value": "[parameters('servicePrincipalPasswordEventGridValue')]"
+                    "servicePrincipalClientIdValue": {
+                        "value": "[parameters('servicePrincipalClientIdValue')]"
+                    },
+                    "servicePrincipalPasswordValue": {
+                        "value": "[parameters('servicePrincipalPasswordValue')]"
                     }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "name": "appServiceBot",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/monitoring/app-service-bot.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[concat(parameters('templatesBaseUri'), '/azuredeploy.parameters.json')]",
+                    "contentVersion": "1.0.0.0"
                 }
             }
         },

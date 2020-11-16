@@ -1,0 +1,127 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "full": {
+            "type": "object"
+        }
+    },
+    "variables": {
+        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('full').appServices.bot.appServicePlan]",
+            "location": "[parameters('full').general.location]",
+            "tags": "[parameters('full').general.tags]",
+            "sku": {
+                "name": "F1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[parameters('full').appServices.bot.appServicePlan]"
+            }
+        },
+        {
+            "name": "botAppService",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('full').appServices.bot.appServicePlan)]"
+            ],
+            "properties": {
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                    "full": {
+                        "value": "[parameters('full')]"
+                    },
+                    "servicePrincipalClientId": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+                            },
+                            "secretName": "[parameters('full').keyVault.secrets.servicePrincipalClientId]"
+                        }
+                    },
+                    "servicePrincipalPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+                            },
+                            "secretName": "[parameters('full').keyVault.secrets.servicePrincipalPassword]"
+                        }
+                    }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "full": {
+                            "type": "object"
+                        },
+                        "servicePrincipalClientId": {
+                            "type": "securestring"
+                        },
+                        "servicePrincipalPassword": {
+                            "type": "securestring"
+                        }
+                    },
+                    "variables": {
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.Web/sites",
+                            "apiVersion": "2018-11-01",
+                            "name": "[parameters('full').appServices.bot.name]",
+                            "location": "[parameters('full').general.location]",
+                            "tags": "[parameters('full').general.tags]",
+                            "kind": "app",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Web/serverfarms', parameters('full').appServices.bot.appServicePlan)]"
+                            ],
+                            "properties": {
+                                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('full').appServices.bot.appServicePlan)]",
+                                "siteConfig": {
+                                    "appSettings": [
+                                        {
+                                            "name": "microsoftAppId",
+                                            "value": "[parameters('servicePrincipalClientId')]"
+                                        },
+                                        {
+                                            "name": "MicrosoftAppPassword",
+                                            "value": "[parameters('servicePrincipalPassword')]"
+                                        },
+                                        {
+                                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                                            "value": "10.14.1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "microsoft.insights/components",
+                            "apiVersion": "2018-05-01-preview",
+                            "name": "[parameters('full').applicationInsights.name]",
+                            "location": "[parameters('full').general.location]",
+                            "tags": "[parameters('full').general.tags]",
+                            "kind": "web",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Web/sites', parameters('full').appServices.bot.name)]"
+                            ],
+                            "properties": {
+                                "Application_Type": "web",
+                                "applicationId": "[parameters('full').appServices.bot.name]"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

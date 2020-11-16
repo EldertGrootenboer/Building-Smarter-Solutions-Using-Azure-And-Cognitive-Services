@@ -23,12 +23,20 @@
                     "full": {
                         "value": "[parameters('full')]"
                     },
-                    "servicePrincipalPasswordEventGrid": {
+                    "servicePrincipalClientId": {
                         "reference": {
                             "keyVault": {
                                 "id": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
                             },
-                            "secretName": "[parameters('full').keyVault.secrets.servicePrincipalPasswordEventGrid]"
+                            "secretName": "[parameters('full').keyVault.secrets.servicePrincipalClientId]"
+                        }
+                    },
+                    "servicePrincipalPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+                            },
+                            "secretName": "[parameters('full').keyVault.secrets.servicePrincipalPassword]"
                         }
                     }
                 },
@@ -39,11 +47,13 @@
                         "full": {
                             "type": "object"
                         },
-                        "servicePrincipalPasswordEventGrid": {
+                        "servicePrincipalClientId": {
+                            "type": "securestring"
+                        },
+                        "servicePrincipalPassword": {
                             "type": "securestring"
                         }
                     },
-                    "variables": {},
                     "resources": [
                         {
                             "type": "Microsoft.Web/connections",
@@ -52,8 +62,8 @@
                             "location": "[parameters('full').general.location]",
                             "properties": {
                                 "parameterValues": {
-                                    "token:clientId": "[parameters('full').eventGrid.servicePrincipal.clientId]",
-                                    "token:clientSecret": "[parameters('servicePrincipalPasswordEventGrid')]",
+                                    "token:clientId": "[parameters('servicePrincipalClientId')]",
+                                    "token:clientSecret": "[parameters('servicePrincipalPassword')]",
                                     "token:TenantId": "[subscription().tenantId]",
                                     "token:grantType": "client_credentials"
                                 },
@@ -62,8 +72,7 @@
                                 }
                             }
                         }
-                    ],
-                    "outputs": {}
+                    ]
                 }
             }
         }

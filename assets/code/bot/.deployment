@@ -1,2 +1,2 @@
 [config]
-SCM_SCRIPT_GENERATOR_ARGS=--aspNetCore ".\corebot.csproj"
+SCM_SCRIPT_GENERATOR_ARGS=--aspNetCore "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services\assets\code\bot\CoreBot.csproj"

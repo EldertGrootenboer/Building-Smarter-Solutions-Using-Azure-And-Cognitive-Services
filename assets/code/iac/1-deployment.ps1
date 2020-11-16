@@ -3,12 +3,12 @@
 #   2. Deploy Azure services
 
 ########## Set before deployment, do not save to repository ##########
-$rdwApiSubscriptionKey = ConvertTo-SecureString "&3sJJI9L&CxwS%=Dg'in""" -AsPlainText -Force
+$rdwApiSubscriptionKey = ConvertTo-SecureString "" -AsPlainText -Force
 ######################################################################
 
 # Update these according to the environment
 $subscriptionName = "Visual Studio Enterprise"
-$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services-6"
+$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services"
 $appRegistrationName = "sp-building-smarter-solutions-using-cognitive-services"
 $administratorEmail = "me@eldert.net"
 $basePath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"
@@ -25,6 +25,7 @@ if(-not $appRegistration)
 {
     # Create app registration
     $appRegistration = New-AzADApplication -DisplayName $appRegistrationName -IdentifierUris "http://$appRegistrationName"
+    $clientId = $appRegistration.ApplicationId | ConvertTo-SecureString -AsPlainText -Force
 
     # Create client secret
     $bytes = New-Object Byte[] 32
@@ -36,7 +37,7 @@ if(-not $appRegistration)
 
 # Create the resource group and deploy the resources
 New-AzResourceGroup -Name $resourceGroupName -Location 'West Europe' -Tag @{CreationDate=[DateTime]::UtcNow.ToString(); Project="Building Smarter Solutions Using Azure and Cognitive Services"; Purpose="Session"}
-New-AzResourceGroupDeployment -Name "BuildSmarterSolutions1" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.1.json" -administratorObjectId $administratorObjectId -rdwApiSubscriptionKey $rdwApiSubscriptionKey -servicePrincipalPasswordEventGridValue $clientSecret
+New-AzResourceGroupDeployment -Name "BuildSmarterSolutions1" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.1.json" -administratorObjectId $administratorObjectId -rdwApiSubscriptionKey $rdwApiSubscriptionKey -servicePrincipalClientIdValue $clientId -servicePrincipalPasswordValue $clientSecret
 
 # Deploy the Bot
 Invoke-Expression "$basePath\assets\code\bot\Scripts\deployment.ps1"

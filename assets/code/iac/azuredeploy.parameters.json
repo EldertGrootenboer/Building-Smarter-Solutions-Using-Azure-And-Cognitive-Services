@@ -146,11 +146,6 @@
                     },
                     "organization": "orgf2413272.crm4"
                 },
-                "eventGrid": {
-                    "servicePrincipal": {
-                        "clientId": "3b919c41-2248-4af7-9ccd-b065131e0049"
-                    }
-                },
                 "functionApps": {
                     "licensePlateRecognizer": {
                         "appServicePlan": "asp-license-plate-recognizer",
@@ -177,7 +172,8 @@
                         "faceApiSubscriptionKey": "faceApiSubscriptionKey",
                         "formApiRecognizerSubscriptionKey": "formApiRecognizerSubscriptionKey",
                         "rdwApiSubscriptionKey": "rdwApiSubscriptionKey",
-                        "servicePrincipalPasswordEventGrid": "servicePrincipalPasswordEventGrid",
+                        "servicePrincipalClientId": "servicePrincipalClientId",
+                        "servicePrincipalPassword": "servicePrincipalPassword",
                         "translatorApiSubscriptionKey": "translatorApiSubscriptionKey"
                     }
                 },
