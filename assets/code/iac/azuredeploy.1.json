@@ -54,7 +54,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/monitoring/app-service-bot.json')]",
+                    "uri": "[concat(parameters('templatesBaseUri'), '/app-service-and-functions/app-service-bot.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
