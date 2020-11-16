@@ -242,7 +242,7 @@
                                     {
                                         "name": "Visitor",
                                         "type": "string",
-                                        "value": "@{substring(triggerBody()?['subject'], add(lastIndexOf(triggerBody()?['subject'], '/'), 1))}"
+                                        "value": "@{replace(replace(substring(triggerBody()?['subject'], add(lastIndexOf(triggerBody()?['subject'], '/'), 1)), '.jpg', ''), '.png', ''}"
                                     }
                                 ]
                             }
