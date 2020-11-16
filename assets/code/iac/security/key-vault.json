@@ -5,9 +5,6 @@
         "administratorObjectId": {
             "type": "string"
         },
-        "rdwApiSubscriptionKey": {
-            "type": "securestring"
-        },
         "servicePrincipalClientIdValue": {
             "type": "securestring"
         },
@@ -16,7 +13,7 @@
         },
         "keyVaultName": {
             "type": "string",
-            "defaultValue": "kv1-"
+            "defaultValue": "kv-"
         },
         "location": {
             "type": "string",
@@ -29,10 +26,6 @@
                 "Project": "Building Smarter Solutions Using Azure and Cognitive Services",
                 "Purpose": "Session"
             }
-        },
-        "rdwApiSubscriptionKeySecretName": {
-            "type": "string",
-            "defaultValue": "rdwApiSubscriptionKey"
         },
         "servicePrincipalClientIdSecretName": {
             "type": "string",
@@ -108,20 +101,6 @@
                 "enabledForDiskEncryption": false,
                 "enabledForTemplateDeployment": true,
                 "enableSoftDelete": true
-            }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2016-10-01",
-            "name": "[concat(variables('keyVaultName'), '/', parameters('rdwApiSubscriptionKeySecretName'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
-            ],
-            "properties": {
-                "value": "[parameters('rdwApiSubscriptionKey')]",
-                "attributes": {
-                    "enabled": true
-                }
             }
         },
         {

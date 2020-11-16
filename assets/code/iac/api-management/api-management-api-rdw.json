@@ -7,8 +7,7 @@
         }
     },
     "variables": {
-        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
-        "keyVaultName": "[concat(parameters('full').keyVault.name, uniqueString(resourceGroup().name))]"
+        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]"
     },
     "resources": [
         {
@@ -112,7 +111,7 @@
                 "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementName'), parameters('full').apiManagement.apis.rdw.name)]"
             ],
             "properties": {
-                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <!-- Retrieve password from Key Vault -->\r\n        <send-request ignore-error=\"false\" timeout=\"20\" response-variable-name=\"passwordResponse\" mode=\"new\">\r\n            <set-url>https://', variables('keyVaultName'), '.vault.azure.net/secrets/', parameters('full').keyVault.secrets.rdwApiSubscriptionKey, '/?api-version=7.0</set-url>\r\n            <set-method>GET</set-method>\r\n            <authentication-managed-identity resource=\"https://vault.azure.net\" />\r\n        </send-request>\r\n        <set-variable name=\"rdwApiSubscriptionKey\" value=\"@{ var secret = ((IResponse)context.Variables[\"passwordResponse\"]).Body.As<JObject>(); return secret[\"value\"].ToString(); }\" />\r\n        <!-- Set headers -->\r\n        <set-header name=\"X-App-Token\" exists-action=\"override\">\r\n            <value>@((string)context.Variables[\"rdwApiSubscriptionKey\"])</value>\r\n        </set-header>\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
+                "value": "[concat('<policies>\r\n    <inbound>\r\n        <base />\r\n        <set-header name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n    </inbound>\r\n    <backend>\r\n        <base />\r\n    </backend>\r\n    <outbound>\r\n        <base />\r\n    </outbound>\r\n    <on-error>\r\n        <base />\r\n    </on-error>\r\n</policies>')]",
                 "format": "rawxml"
             }
         },
