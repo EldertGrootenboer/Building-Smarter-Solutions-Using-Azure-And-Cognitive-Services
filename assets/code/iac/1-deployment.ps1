@@ -2,16 +2,14 @@
 #   1. Create a resource group
 #   2. Deploy Azure services
 
-########## Set before deployment, do not save to repository ##########
-$rdwApiSubscriptionKey = ConvertTo-SecureString "" -AsPlainText -Force
-######################################################################
-
 # Update these according to the environment
 $subscriptionName = "Visual Studio Enterprise"
-$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services"
-$appRegistrationName = "sp-building-smarter-solutions-using-cognitive-services"
+$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services-2"
+$servicePrincipalName = "sp-building-smarter-solutions-using-cognitive-services"
 $administratorEmail = "me@eldert.net"
 $basePath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"
+$botPath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services\assets\code\bot"
+$botName = "bot-building-smarter-solutions"
 
 # Login to Azure
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
@@ -19,33 +17,58 @@ Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
 # Retrieves the dynamic parameters
 $administratorObjectId = (Get-AzADUser -Mail $administratorEmail).Id
 
-# If the app registration doesn't exist, we will create one
-$appRegistration = Get-AzADApplication -DisplayName $appRegistrationName
-if(-not $appRegistration)
-{
-    # Create app registration
-    $appRegistration = New-AzADApplication -DisplayName $appRegistrationName -IdentifierUris "http://$appRegistrationName"
-    $clientId = $appRegistration.ApplicationId | ConvertTo-SecureString -AsPlainText -Force
+# If the app registration exists, delete it, as we will create a new one
+$servicePrincipal = Get-AzADServicePrincipal -DisplayName $servicePrincipalName
 
-    # Create client secret
-    $bytes = New-Object Byte[] 32
-    ([System.Security.Cryptography.RandomNumberGenerator]::Create()).GetBytes($bytes)
-    $clientSecret = [System.Convert]::ToBase64String($bytes) | ConvertTo-SecureString -AsPlainText -Force
-    $endDate = [System.DateTime]::Now.AddYears(5)
-    New-AzADAppCredential -ObjectId $appRegistration.ObjectId -Password $clientSecret -EndDate $endDate
+if($servicePrincipal)
+{
+    Remove-AzADServicePrincipal -DisplayName $servicePrincipalName -Force
+    Remove-AzADApplication -DisplayName $servicePrincipalName -Force
 }
 
+# Create app registration
+$servicePrincipal = New-AzADServicePrincipal -DisplayName $servicePrincipalName
+$clientId = $servicePrincipal.ApplicationId | ConvertTo-SecureString -AsPlainText -Force
+
+# Create client secret
+$bytes = New-Object Byte[] 32
+([System.Security.Cryptography.RandomNumberGenerator]::Create()).GetBytes($bytes)
+$clientSecret = [System.Convert]::ToBase64String($bytes) | ConvertTo-SecureString -AsPlainText -Force
+$endDate = [System.DateTime]::Now.AddYears(5)
+New-AzADAppCredential -DisplayName $servicePrincipalName -Password $clientSecret -EndDate $endDate
+
 # Create the resource group
-New-AzResourceGroup -Name $resourceGroupName -Location 'West Europe' -Tag @{CreationDate=[DateTime]::UtcNow.ToString(); Project="Building Smarter Solutions Using Azure and Cognitive Services"; Purpose="Session"}
+New-AzResourceGroup -Name $resourceGroupName -Location 'West Europe' -Tag @{CreationDate=[DateTime]::UtcNow.ToString(); Project="Building Smarter Solutions Using Azure and Cognitive Services"; Purpose="Session"} -Force
 
 # Deploy Key Vault
-New-AzResourceGroupDeployment -Name "BuildSmarterSolutionsKeyVault" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\security\key-vault.json" -administratorObjectId $administratorObjectId -rdwApiSubscriptionKey $rdwApiSubscriptionKey -servicePrincipalClientIdValue $clientId -servicePrincipalPasswordValue $clientSecret
+New-AzResourceGroupDeployment -Name "BuildSmarterSolutionsKeyVault" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\security\key-vault.json" -administratorObjectId $administratorObjectId -servicePrincipalClientIdValue $clientId -servicePrincipalPasswordValue $clientSecret
 
 # Deploy first group of resources
 New-AzResourceGroupDeployment -Name "BuildSmarterSolutions1" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.1.json"
 
+# Deploy the License Plate Recognizer Function
+dotnet publish "$basePath\assets\code\functions\license-plate-recognizer\LicensePlateRecognizer.csproj" -c Release -o "$basePath\assets\code\functions\license-plate-recognizer\publish"
+Compress-Archive -Path "$basePath\assets\code\functions\license-plate-recognizer\publish\*" -DestinationPath "$basePath\assets\code\functions\license-plate-recognizer\Deployment.zip"
+$functionApp = Get-AzResource -ResourceGroupName $resourceGroupName -Name fa-license-plate-recognizer-*
+Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath\assets\code\functions\license-plate-recognizer\Deployment.zip" -Force
+Remove-Item "$basePath\assets\code\functions\license-plate-recognizer\Deployment.zip"
+
+# Deploy the Retrieve Latest Model Function
+dotnet publish "$basePath\assets\code\functions\retrieve-latest-model\RetrieveLatestModel.csproj" -c Release -o "$basePath\assets\code\functions\retrieve-latest-model\publish"
+Compress-Archive -Path "$basePath\assets\code\functions\retrieve-latest-model\publish\*" -DestinationPath "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip"
+$functionApp = Get-AzResource -ResourceGroupName $resourceGroupName -Name fa-retrieve-latest-model-*
+Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip" -Force
+Remove-Item "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip"
+
 # Deploy the Bot
-Invoke-Expression "$basePath\assets\code\bot\Scripts\deployment.ps1"
+#az login
+az account set --subscription $subscriptionName
+Set-Location $botPath
+az bot prepare-deploy --lang Csharp --code-dir . --proj-file-path ".\CoreBot.csproj"
+Compress-Archive -Path .\* -DestinationPath .\Deployment.zip
+Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $botName -ArchivePath "$botPath\Deployment.zip" -Force
+Remove-Item .\.deployment
+Remove-Item $botPath\Deployment.zip
 
 # Deploy second group of resources
 New-AzResourceGroupDeployment -Name "BuildSmarterSolutions2" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.2.json"
