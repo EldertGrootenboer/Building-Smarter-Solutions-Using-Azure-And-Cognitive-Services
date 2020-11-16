@@ -2,51 +2,12 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "administratorObjectId": {
-            "type": "string"
-        },
-        "rdwApiSubscriptionKey": {
-            "type": "securestring"
-        },
-        "servicePrincipalClientIdValue": {
-            "type": "securestring"
-        },
-        "servicePrincipalPasswordValue": {
-            "type": "securestring"
-        },
         "templatesBaseUri": {
             "defaultValue": "https://raw.githubusercontent.com/EldertGrootenboer/Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services/master/assets/code/iac",
             "type": "string"
         }
     },
-    "variables": {},
     "resources": [
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "keyVault",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('templatesBaseUri'), '/security/key-vault.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "administratorObjectId": {
-                        "value": "[parameters('administratorObjectId')]"
-                    },
-                    "rdwApiSubscriptionKey": {
-                        "value": "[parameters('rdwApiSubscriptionKey')]"
-                    },
-                    "servicePrincipalClientIdValue": {
-                        "value": "[parameters('servicePrincipalClientIdValue')]"
-                    },
-                    "servicePrincipalPasswordValue": {
-                        "value": "[parameters('servicePrincipalPasswordValue')]"
-                    }
-                }
-            }
-        },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -115,9 +76,6 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "name": "appServiceBot",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'keyVault')]"
-            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -135,8 +93,7 @@
             "apiVersion": "2019-10-01",
             "name": "apiManagement",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]",
-                "[resourceId('Microsoft.Resources/deployments', 'keyVault')]"
+                "[resourceId('Microsoft.Resources/deployments', 'applicationInsights')]"
             ],
             "properties": {
                 "mode": "Incremental",

@@ -35,9 +35,14 @@ if(-not $appRegistration)
     New-AzADAppCredential -ObjectId $appRegistration.ObjectId -Password $clientSecret -EndDate $endDate
 }
 
-# Create the resource group and deploy the resources
+# Create the resource group
 New-AzResourceGroup -Name $resourceGroupName -Location 'West Europe' -Tag @{CreationDate=[DateTime]::UtcNow.ToString(); Project="Building Smarter Solutions Using Azure and Cognitive Services"; Purpose="Session"}
-New-AzResourceGroupDeployment -Name "BuildSmarterSolutions1" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.1.json" -administratorObjectId $administratorObjectId -rdwApiSubscriptionKey $rdwApiSubscriptionKey -servicePrincipalClientIdValue $clientId -servicePrincipalPasswordValue $clientSecret
+
+# Deploy Key Vault
+New-AzResourceGroupDeployment -Name "BuildSmarterSolutionsKeyVault" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\security\key-vault.json" -administratorObjectId $administratorObjectId -rdwApiSubscriptionKey $rdwApiSubscriptionKey -servicePrincipalClientIdValue $clientId -servicePrincipalPasswordValue $clientSecret
+
+# Deploy first group of resources
+New-AzResourceGroupDeployment -Name "BuildSmarterSolutions1" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.1.json"
 
 # Deploy the Bot
 Invoke-Expression "$basePath\assets\code\bot\Scripts\deployment.ps1"
