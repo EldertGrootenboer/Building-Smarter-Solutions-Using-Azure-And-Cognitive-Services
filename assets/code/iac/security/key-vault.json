@@ -16,7 +16,7 @@
         },
         "keyVaultName": {
             "type": "string",
-            "defaultValue": "[concat('kv-', uniqueString(resourceGroup().name))]"
+            "defaultValue": "kv1-"
         },
         "location": {
             "type": "string",
@@ -43,12 +43,14 @@
             "defaultValue": "servicePrincipalPassword"
         }
     },
-    "variables": {},
+    "variables": {
+        "keyVaultName": "[concat(parameters('keyVaultName'), uniqueString(resourceGroup().name))]"
+    },
     "resources": [
         {
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2016-10-01",
-            "name": "[parameters('keyVaultName')]",
+            "name": "[variables('keyVaultName')]",
             "location": "[parameters('location')]",
             "tags": "[parameters('tags')]",
             "properties": {
@@ -111,9 +113,9 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVaultName'), '/', parameters('rdwApiSubscriptionKeySecretName'))]",
+            "name": "[concat(variables('keyVaultName'), '/', parameters('rdwApiSubscriptionKeySecretName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
             ],
             "properties": {
                 "value": "[parameters('rdwApiSubscriptionKey')]",
@@ -126,9 +128,9 @@
             "condition": "[not(empty(parameters('servicePrincipalClientIdValue')))]",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalClientIdSecretName'))]",
+            "name": "[concat(variables('keyVaultName'), '/', parameters('servicePrincipalClientIdSecretName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
             ],
             "properties": {
                 "value": "[parameters('servicePrincipalClientIdValue')]",
@@ -141,9 +143,9 @@
             "condition": "[not(empty(parameters('servicePrincipalPasswordValue')))]",
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVaultName'), '/', parameters('servicePrincipalPasswordSecretName'))]",
+            "name": "[concat(variables('keyVaultName'), '/', parameters('servicePrincipalPasswordSecretName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
             ],
             "properties": {
                 "value": "[parameters('servicePrincipalPasswordValue')]",
