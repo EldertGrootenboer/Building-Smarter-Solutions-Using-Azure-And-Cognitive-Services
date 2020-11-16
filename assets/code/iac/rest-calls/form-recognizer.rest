@@ -3,8 +3,3 @@
 ### List models
 GET https://apiUrl/custom/models?op=full
 Ocp-Apim-Subscription-Key: {{formRecognizerApiSubscriptionKey}}
-
-### Get model
-GET https://apiUrl/custom/models/4a440d5c-5dc9-4c15-82e1-68a221ae5828?includeKeys=False HTTP/1.1
-Ocp-Apim-Subscription-Key: {{formRecognizerApiSubscriptionKey}}
-
