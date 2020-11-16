@@ -4,7 +4,7 @@
 
 # Update these according to the environment
 $subscriptionName = "Visual Studio Enterprise"
-$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services-2"
+$resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services"
 $servicePrincipalName = "sp-building-smarter-solutions-using-cognitive-services"
 $administratorEmail = "me@eldert.net"
 $basePath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"

@@ -1,6 +1,5 @@
 @persongroup = visitors
 @apiUrl = westeurope.api.cognitive.microsoft.com/face/v1.0
-@faceUrl = https://stpelort3aly5dq.blob.core.windows.net/gatecamera/eldert-grootenboer.png?sp=r&st=2020-11-16T12:26:43Z&se=2020-11-16T20:26:43Z&spr=https&sv=2019-12-12&sr=b&sig=5mdsbhcNeoTgdc1p2RMPPPLxwkEJtJerP8%2FC64gbCj4%3D
 
 ### Create persongroup
 PUT https://{{apiUrl}}/persongroups/{{persongroup}} HTTP/1.1
@@ -28,7 +27,7 @@ Content-Type: application/json
 Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 
 {
-    "url": "{{faceUrl}}"
+    "url": "{{faceImageUrl}}"
 }
 
 ### Train person group
@@ -39,6 +38,7 @@ Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 GET https://{{apiUrl}}/persongroups/{{persongroup}}/training HTTP/1.1
 Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 
+############################### TESTS ###############################
 ### Detect face
 # @name face
 POST https://{{apiUrl}}/detect?returnFaceId=true&returnFaceLandmarks=false&recognitionModel=recognition_01&returnRecognitionModel=false&detectionModel=detection_01 HTTP/1.1
@@ -46,9 +46,10 @@ Content-Type: application/json
 Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 
 {
-    "url": "{{faceUrl}}"
+    "url": "{{faceImageUrl}}"
 }
 
+### Update faceIds with result from previous call ###
 ### Identify face
 POST https://{{apiUrl}}/identify HTTP/1.1
 Content-Type: application/json
@@ -57,7 +58,7 @@ Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 {
     "personGroupId": "{{persongroup}}",
     "faceIds": [
-        "b8209b4d-67b1-49fb-a3e7-1078f4f5c907"
+        "4f6e1517-aad6-489f-beec-236a72204f0b"
     ],
     "maxNumOfCandidatesReturned": 1,
     "confidenceThreshold": 0.5

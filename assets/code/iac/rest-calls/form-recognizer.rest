@@ -1,5 +1,5 @@
 @apiUrl = westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1
 
 ### List models
-GET https://apiUrl/custom/models?op=full
+GET https://{{apiUrl}}/custom/models?op=full
 Ocp-Apim-Subscription-Key: {{formRecognizerApiSubscriptionKey}}
