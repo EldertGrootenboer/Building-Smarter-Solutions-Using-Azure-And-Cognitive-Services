@@ -313,7 +313,7 @@
                                             "type": "ApiConnection",
                                             "inputs": {
                                                 "body": {
-                                                    "new_faceapipersonid": "@variables('Face API Person ID')"
+                                                    "cr9d6_faceapipersonid": "@variables('Face API Person ID')"
                                                 },
                                                 "host": {
                                                     "connection": {
