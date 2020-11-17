@@ -88,13 +88,6 @@
                         "azurePlatform": "building-smarter-solutions"
                     }
                 },
-                "appServices": {
-                    "bot": {
-                        "appServicePlan": "asp-bot-building-smarter-solutions",
-                        "microsoftAppId": "784a6d8e-cb98-472e-af3d-6c29b74601f1",
-                        "name": "bot-building-smarter-solutions"
-                    }
-                },
                 "applicationInsights": {
                     "name": "ai-building-smarter-solutions"
                 },
@@ -115,10 +108,6 @@
                         "siteUrl": "https://westeurope.api.cognitive.microsoft.com",
                         "sku": "S0"
                     },
-                    "luis": {
-                        "name": "luis-building-smarter-solutions-",
-                        "sku": "S0"
-                    },
                     "translator": {
                         "name": "tl-building-smarter-solutions-",
                         "sku": "S1"
@@ -128,20 +117,21 @@
                     "entities": {
                         "ships": {
                             "fields": {
-                                "email": "cr105_email",
-                                "shipName": "cr105_shipname"
+                                "email": "cr9d6_email",
+                                "shipName": "cr9d6_shipname"
                             },
-                            "name": "cr105_ships"
+                            "name": "cr9d6_ships"
                         },
                         "visitors": {
                             "fields": {
+                                "email": "cr9d6_email",
                                 "faceApiPersonId": "cr9d6_faceapipersonid",
                                 "name": "cr9d6_name",
                                 "securityCourseDone": "cr9d6_securitycoursedone",
                                 "visitorId": "cr9d6_visitorid",
                                 "visits": "cr9d6_visits"
                             },
-                            "name": "cr105_visitors"
+                            "name": "cr9d6_visitors"
                         }
                     },
                     "organization": "org0b8d6c3a.crm4"

@@ -1,0 +1,276 @@
+{
+  "luis_schema_version": "7.0.0",
+  "intents": [
+    {
+      "name": "None",
+      "features": []
+    },
+    {
+      "name": "Register visitor",
+      "features": []
+    }
+  ],
+  "entities": [
+    {
+      "name": "reason",
+      "children": [],
+      "roles": [],
+      "features": []
+    },
+    {
+      "name": "ship",
+      "children": [],
+      "roles": [],
+      "features": []
+    }
+  ],
+  "hierarchicals": [],
+  "composites": [],
+  "closedLists": [],
+  "prebuiltEntities": [
+    {
+      "name": "datetimeV2",
+      "roles": []
+    },
+    {
+      "name": "email",
+      "roles": []
+    },
+    {
+      "name": "personName",
+      "roles": []
+    }
+  ],
+  "utterances": [
+    {
+      "text": "can i come by and visit the somtrans v?",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 28,
+          "endPos": 37,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "can i come by in an hour to visit the somtrans x?",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 38,
+          "endPos": 47,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "eldert grootenboer will be coming by to do repairs for our ship",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "reason",
+          "startPos": 40,
+          "endPos": 49,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "hello",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "hi, eldert grootenboer here, i was wondering if it was possible to come by tomorrow around noon to visit the somtrans iv, as i need to do repairs there",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 109,
+          "endPos": 119,
+          "children": []
+        },
+        {
+          "entity": "reason",
+          "startPos": 138,
+          "endPos": 144,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "hi, my name is eldert grootenboer and i need to come for the somtrans iii for repairs tomorrow evening",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 61,
+          "endPos": 72,
+          "children": []
+        },
+        {
+          "entity": "reason",
+          "startPos": 78,
+          "endPos": 84,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "hi, this is eldert grootenboer, and i would like to register for a visit at the somtrans lng for tomorrow",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 80,
+          "endPos": 91,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "how are you doing",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i need to come by for the ship somtrans x+",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 31,
+          "endPos": 40,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "i need to do repairs on the somtrans lng",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "reason",
+          "startPos": 13,
+          "endPos": 19,
+          "children": []
+        },
+        {
+          "entity": "ship",
+          "startPos": 28,
+          "endPos": 39,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "i would like register eldert grootenboer to visit the ship somtrans lng tomorrow afternoon to do repairs",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 59,
+          "endPos": 70,
+          "children": []
+        },
+        {
+          "entity": "reason",
+          "startPos": 97,
+          "endPos": 103,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "i would like to come and visit a ship",
+      "intent": "Register visitor",
+      "entities": []
+    },
+    {
+      "text": "i would like to come by today",
+      "intent": "Register visitor",
+      "entities": []
+    },
+    {
+      "text": "i would like to register a visitor",
+      "intent": "Register visitor",
+      "entities": []
+    },
+    {
+      "text": "register visitor",
+      "intent": "Register visitor",
+      "entities": []
+    },
+    {
+      "text": "the diamant would like to register someone to come and do repairs",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 4,
+          "endPos": 10,
+          "children": []
+        },
+        {
+          "entity": "reason",
+          "startPos": 58,
+          "endPos": 64,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "this is eldert grootenboer and i need to visit the robijn",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "ship",
+          "startPos": 51,
+          "endPos": 56,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "we would like to visit",
+      "intent": "Register visitor",
+      "entities": []
+    },
+    {
+      "text": "we would like to visit a repairer",
+      "intent": "Register visitor",
+      "entities": [
+        {
+          "entity": "reason",
+          "startPos": 25,
+          "endPos": 32,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "what can i do here",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "who is this",
+      "intent": "None",
+      "entities": []
+    }
+  ],
+  "versionId": "0.1",
+  "name": "building-smarter-solutions-using-cognitive-services",
+  "desc": "Building Smarter Solutions Using Azure and Cognitive Services",
+  "culture": "en-us",
+  "tokenizerVersion": "1.0.0",
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "phraselists": [],
+  "regex_features": [],
+  "patterns": [],
+  "settings": []
+}

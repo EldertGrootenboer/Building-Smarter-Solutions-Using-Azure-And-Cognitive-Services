@@ -8,8 +8,6 @@ $resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services"
 $servicePrincipalName = "sp-building-smarter-solutions-using-cognitive-services"
 $administratorEmail = "me@eldert.net"
 $basePath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"
-$botPath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services\assets\code\bot"
-$botName = "bot-building-smarter-solutions"
 
 # Login to Azure
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
@@ -59,16 +57,6 @@ Compress-Archive -Path "$basePath\assets\code\functions\retrieve-latest-model\pu
 $functionApp = Get-AzResource -ResourceGroupName $resourceGroupName -Name fa-retrieve-latest-model-*
 Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip" -Force
 Remove-Item "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip"
-
-# Deploy the Bot
-#az login
-az account set --subscription $subscriptionName
-Set-Location $botPath
-az bot prepare-deploy --lang Csharp --code-dir . --proj-file-path ".\CoreBot.csproj"
-Compress-Archive -Path .\* -DestinationPath .\Deployment.zip
-Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $botName -ArchivePath "$botPath\Deployment.zip" -Force
-Remove-Item .\.deployment
-Remove-Item $botPath\Deployment.zip
 
 # Deploy second group of resources
 New-AzResourceGroupDeployment -Name "BuildSmarterSolutions2" -ResourceGroupName $resourceGroupName -TemplateFile "$basePath\assets\code\iac\azuredeploy.2.json"
