@@ -110,7 +110,7 @@
                                         },
                                         {
                                             "name": "ApiManagementEndpoint",
-                                            "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name), '2019-12-01').gatewayUrl]"
+                                            "value": "[reference(resourceId('Microsoft.ApiManagement/service', variables('apiManagementName')), '2019-12-01').gatewayUrl]"
                                         },
                                         {
                                             "name": "ApiManagementCreateVisitorPath",
