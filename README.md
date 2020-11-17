@@ -54,7 +54,7 @@ In this session, you will see learn we can get data from the real world, and use
 - Add an App.config file with the content found below.
 - Update the configuration as necessary.
 
-'''xml
+```xml
 <?xml version="1.0"?>
 <configuration>
   <appSettings>
@@ -64,7 +64,7 @@ In this session, you will see learn we can get data from the real world, and use
     <add key="QueueDepartureCamera" value="departure-camera" />
   </appSettings>
 </configuration>
-'''
+```
 
 ### VIsual Studio Code
 
