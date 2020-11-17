@@ -88,13 +88,6 @@
                         "azurePlatform": "building-smarter-solutions"
                     }
                 },
-                "appServices": {
-                    "bot": {
-                        "appServicePlan": "asp-bot-building-smarter-solutions",
-                        "microsoftAppId": "784a6d8e-cb98-472e-af3d-6c29b74601f1",
-                        "name": "bot-building-smarter-solutions"
-                    }
-                },
                 "applicationInsights": {
                     "name": "ai-building-smarter-solutions"
                 },
@@ -114,10 +107,6 @@
                         "name": "fr-building-smarter-solutions-",
                         "siteUrl": "https://westeurope.api.cognitive.microsoft.com",
                         "sku": "S0"
-                    },
-                    "luis": {
-                        "name": "building-smarter-solutions-using-cognitive-services-3",
-                        "appId": "de8e13ab-2003-44f8-ac24-8d9e5551fab5"
                     },
                     "translator": {
                         "name": "tl-building-smarter-solutions-",

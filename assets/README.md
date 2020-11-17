@@ -7,6 +7,34 @@
 - Make sure the Entities / Tables and their corresponding Fields / Columns specified in the _commonDataService_ parameter are created in your CDS environment.
 - Make sure a Visitor entity exists with name eldert-grootenboer.
 
+### Bot
+
+- Clone the bot repository and make sure you can build and run it.
+- Add an appsettings.json file with the content found below.
+- After deployment, update the configuration as necessary.
+
+```json
+{
+  "MicrosoftAppId": "",
+  "MicrosoftAppPassword": "",
+  "LuisAppId": "00000000-0000-0000-0000-000000000000",
+  "LuisAPIKey": "<your-luis-api-key>",
+  "LuisAPIHostName": "<your-luis-region>.api.cognitive.microsoft.com",
+  "ApiManagementEndpoint": "https://<your-apim-instance-name>.azure-api.net",
+  "ApiManagementCreateVisitorPath": "/visitors/create",
+  "BlobConnectionString": "DefaultEndpointsProtocol=https;AccountName=<your-storage-account-name>;AccountKey=<your-storage-account-key>;EndpointSuffix=core.windows.net",
+  "BlobContainerVisitorPictures": "visitorpictures",
+  "ApiManagementSubscriptionKey": "<your-api-management-subscription-key>"
+}
+```
+
+### LUIS
+
+- Create LUIS authoring application from [https://eu.luis.ai](https://eu.luis.ai).
+- Import the LUIS definition from [luis-building-smarter-solutions-using-cognitive-services.json](./code/iac/cognitive-services/luis-models/luis-building-smarter-solutions-using-cognitive-services.json).
+- Update the configuration parameter _LuisAppId_ of the bot application settings with the identifier found on Manage page of the LUIS application on [https://eu.luis.ai](https://eu.luis.ai).
+- Update the configuration parameter _LuisAPIKey_ of the bot with the API key which can be found in the Azure portal.
+
 ## Deployment
 
 - Use the script [1-deployment.ps1](./code/iac/1-deployment.ps1) to deploy all the resources in Azure.
@@ -31,7 +59,6 @@
 - To train the Face API, start by uploading [eldert-grootenboer.png](./demo/demo-1-registration/eldert-grootenboer.png) to the gatecamera container in our Storage Account, and create a SAS token for the blob.
 - Update the faceImageUrl parameter in your .vscode/settings.json with the SAS url.
 - Execute all the calls in the file [faces.rest](./code/iac/rest-calls/faces.rest) to create and train the model.
-  - Update the faceapipersonid field of the Visitor created in CRM with the personIdvalue from the response of the _Get person ID_ call in [faces.rest](./code/iac/rest-calls/faces.rest).
 
 ### Update Logic App actions
 
@@ -46,7 +73,20 @@
   - Update visitor
     - Environment
     - Entity Name
+- [la-register-visitor](./code/iac/logic-apps/la-register-visitor.json)
+  - Get ship
+    - Environment
+    - Entity Name
+  - Get visitor
+    - Environment
+    - Entity Name
+  - Update visitor
+    - Environment
+    - Entity Name
+  - Create visitor
+    - Environment
+    - Entity Name
 
 ## Example utterances
 
-The Somtrans LNG would like to register Eldert Grootenboer as a visitor to do repairs by tomorrow afternoon. Their email address is eldert@eldert.net.
+The Somtrans LNG would like to register Eldert Grootenboer as a visitor to do repairs by tomorrow afternoon. Their email address is eldert@eldert.net to contact them on.
