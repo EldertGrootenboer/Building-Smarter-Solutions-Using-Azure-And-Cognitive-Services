@@ -6,7 +6,7 @@ In this session, you will see learn we can get data from the real world, and use
 
 ## Preparations
 
-- Update all other values in the [parameters file](./code/azuredeploy.parameters.json) according to your own environment.
+- Update all values in the [parameters file](./code/azuredeploy.parameters.json) according to your own environment.
 - Make sure to update the organization in the according to the _commonDataService_ parameter your CRM organization.
 - Make sure the Entities / Tables and their corresponding Fields / Columns specified in the _commonDataService_ parameter are created in your CDS environment.
 - Make sure a Visitor entity exists with name eldert-grootenboer.
