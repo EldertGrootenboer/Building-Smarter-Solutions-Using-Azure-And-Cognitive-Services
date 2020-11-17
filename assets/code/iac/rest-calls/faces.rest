@@ -11,24 +11,6 @@ Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
     "recognitionModel": "recognition_01"
 }
 
-### Create person in persongroup
-# @name person
-POST https://{{apiUrl}}/persongroups/{{persongroup}}/persons HTTP/1.1
-Content-Type: application/json
-Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
-
-{
-    "name": "Eldert Grootenboer"
-}
-
-### Train person group
-POST https://{{apiUrl}}/persongroups/{{persongroup}}/train HTTP/1.1
-Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
-
-### Get training status
-GET https://{{apiUrl}}/persongroups/{{persongroup}}/training HTTP/1.1
-Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
-
 ################################ END ################################
 
 
@@ -77,6 +59,24 @@ Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 ### Delete person by ID
 DELETE https://{{apiUrl}}/persongroups/{{persongroup}}/persons/ed7f5a87-b223-4e01-b5f5-74bfad5f1fde HTTP/1.1
 Content-Type: application/json
+Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
+
+### Create person in persongroup
+# @name person
+POST https://{{apiUrl}}/persongroups/{{persongroup}}/persons HTTP/1.1
+Content-Type: application/json
+Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
+
+{
+    "name": "Eldert Grootenboer"
+}
+
+### Train person group
+POST https://{{apiUrl}}/persongroups/{{persongroup}}/train HTTP/1.1
+Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
+
+### Get training status
+GET https://{{apiUrl}}/persongroups/{{persongroup}}/training HTTP/1.1
 Ocp-Apim-Subscription-Key: {{faceApiSubscriptionKey}}
 
 ### Add face to person
