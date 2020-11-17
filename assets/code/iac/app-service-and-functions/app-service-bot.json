@@ -114,7 +114,7 @@
                                         },
                                         {
                                             "name": "ApiManagementCreateVisitorPath",
-                                            "value": "[concat('/', parameters('full').apiManagement.apis.visitors.name, '/', parameters('full').apiManagement.apis.visitors.operation.create.urlTemplate)]"
+                                            "value": "[concat('/', parameters('full').apiManagement.apis.visitors.name, '/', parameters('full').apiManagement.apis.visitors.operations.create.urlTemplate)]"
                                         },
                                         {
                                             "name": "BlobConnectionString",
