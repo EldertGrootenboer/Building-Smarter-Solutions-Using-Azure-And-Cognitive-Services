@@ -72,6 +72,9 @@
                         }
                     },
                     "variables": {
+                        "apiManagementName": "[concat(parameters('full').apiManagement.name, uniqueString(resourceGroup().name))]",
+                        "storageAccountName": "[concat(parameters('full').storageAccount.name, uniqueString(resourceGroup().name))]",
+                        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
                     },
                     "resources": [
                         {
@@ -86,7 +89,7 @@
                                 "siteConfig": {
                                     "appSettings": [
                                         {
-                                            "name": "microsoftAppId",
+                                            "name": "MicrosoftAppId",
                                             "value": "[parameters('servicePrincipalClientId')]"
                                         },
                                         {
@@ -94,44 +97,43 @@
                                             "value": "[parameters('servicePrincipalPassword')]"
                                         },
                                         {
+                                            "name": "LuisAppId",
+                                            "value": "[parameters('full').cognitiveServices.luis.appId]"
+                                        },
+                                        {
+                                            "name": "LuisAPIKey",
+                                            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('full').cognitiveServices.luis.name),'2017-04-18').key1]"
+                                        },
+                                        {
+                                            "name": "LuisAPIHostName",
+                                            "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts', parameters('full').cognitiveServices.luis.name), '2017-04-18').endpoint]"
+                                        },
+                                        {
+                                            "name": "ApiManagementEndpoint",
+                                            "value": "[reference(resourceId('Microsoft.ApiManagement/service', parameters('full').apiManagement.name), '2019-12-01').gatewayUrl]"
+                                        },
+                                        {
+                                            "name": "ApiManagementCreateVisitorPath",
+                                            "value": "[concat('/', parameters('full').apiManagement.apis.visitors.name, '/', parameters('full').apiManagement.apis.visitors.operation.create.urlTemplate)]"
+                                        },
+                                        {
+                                            "name": "BlobConnectionString",
+                                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1, ';EndpointSuffix=core.windows.net')]"
+                                        },
+                                        {
+                                            "name": "BlobContainerVisitorPictures",
+                                            "value": "[parameters('full').storageAccount.containers.visitorPictures]"
+                                        },
+                                        {
+                                            "name": "ApiManagementSubscriptionKey",
+                                            "value": "[listSecrets(resourceId('Microsoft.ApiManagement/service/subscriptions', variables('apiManagementName'), parameters('full').apiManagement.subscriptions.azurePlatform), '2019-12-01').primaryKey]"
+                                        },
+                                        {
                                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
                                             "value": "10.14.1"
                                         }
                                     ]
                                 }
-                            }
-                        },
-                        {
-                            "apiVersion": "2018-07-12",
-                            "type": "Microsoft.BotService/botServices",
-                            "name": "[parameters('full').appServices.bot.name]",
-                            "location": "global",
-                            "kind": "sdk",
-                            "sku": {
-                                "name": "F0"
-                            },
-                            "properties": {
-                                "displayName": "[parameters('full').appServices.bot.name]",
-                                "endpoint": "[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('full').appServices.bot.name), '2018-11-01').defaultHostName, '/api/messages')]",
-                                "msaAppId": "[parameters('servicePrincipalClientId')]"
-                            },
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/sites', parameters('full').appServices.bot.name)]"
-                            ]
-                        },
-                        {
-                            "type": "microsoft.insights/components",
-                            "apiVersion": "2018-05-01-preview",
-                            "name": "[parameters('full').applicationInsights.name]",
-                            "location": "[parameters('full').general.location]",
-                            "tags": "[parameters('full').general.tags]",
-                            "kind": "web",
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/sites', parameters('full').appServices.bot.name)]"
-                            ],
-                            "properties": {
-                                "Application_Type": "web",
-                                "applicationId": "[parameters('full').appServices.bot.name]"
                             }
                         }
                     ]

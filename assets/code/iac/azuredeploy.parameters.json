@@ -116,8 +116,8 @@
                         "sku": "S0"
                     },
                     "luis": {
-                        "name": "luis-building-smarter-solutions-",
-                        "sku": "S0"
+                        "name": "luis-building-smarter-solutions-using-cognitive-services",
+                        "appId": "de8e13ab-2003-44f8-ac24-8d9e5551fab5"
                     },
                     "translator": {
                         "name": "tl-building-smarter-solutions-",
@@ -135,6 +135,7 @@
                         },
                         "visitors": {
                             "fields": {
+                                "email": "cr9d6_email",
                                 "faceApiPersonId": "cr9d6_faceapipersonid",
                                 "name": "cr9d6_name",
                                 "securityCourseDone": "cr9d6_securitycoursedone",
