@@ -353,3 +353,5 @@ assets/demo/demo-2-gate-arrival/rtt-cockpit/RTTCockpit.exe.config
 assets/code/bot/appsettings.json
 assets/code/functions/retrieve-latest-model/local.settings.json
 .vscode/settings.json
+/assets/code/rtt-cockpit/RTTCockpit/App.config
+/assets/code/bot/Properties/ServiceDependencies/bot-building-smarter-solutions-2 - Web Deploy/profile.arm.json
