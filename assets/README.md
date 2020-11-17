@@ -45,6 +45,17 @@
 - Update faceApiSubscriptionKey in your .vscode/settings.json.
 - Update formRecognizerApiSubscriptionKey in your .vscode/settings.json.
 
+```json
+{
+    "rest-client.environmentVariables": {
+        "$shared": {
+            "faceApiSubscriptionKey": "<your-api-subscription-key>",
+            "formRecognizerApiSubscriptionKey": "<your-api-subscription-key>"
+        }
+    }
+}
+```
+
 ### Train Form Recognizer API
 
 - To train the Form Recognizer API we use [https://fott-preview.azurewebsites.net/](https://fott-preview.azurewebsites.net/).
@@ -54,11 +65,9 @@
 - After uploading, go to the train blade and train the model.
 - After training your model, check if you can list them using [form-recognizer.rest](./code/iac/rest-calls/form-recognizer.rest). If you don't see your model, you will probably need to update the version (currently set to v2.1-preview.1) to the latest version. In this case, you will also need to update the version in [RetrieveLatestModel.cs](./code/functions/retrieve-latest-model/RetrieveLatestModel.cs).
 
-### Train Face API
+### Face API
 
-- To train the Face API, start by uploading [eldert-grootenboer.png](./demo/demo-1-registration/eldert-grootenboer.png) to the gatecamera container in our Storage Account, and create a SAS token for the blob.
-- Update the faceImageUrl parameter in your .vscode/settings.json with the SAS url.
-- Execute all the calls in the file [faces.rest](./code/iac/rest-calls/faces.rest) to create and train the model.
+- Execute the calls in file [faces.rest](./code/iac/rest-calls/faces.rest) to create a person group.
 
 ### Update Logic App actions
 
