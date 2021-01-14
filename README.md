@@ -86,9 +86,9 @@ In this session, you will see learn we can get data from the real world, and use
 ### Train Form Recognizer API
 
 - To train the Form Recognizer API we use the [Form OCR Testing Tool](https://fott-preview.azurewebsites.net/).
+- Start by uploading all images from [demo-4-departure](./demo/demo-4-departure), except [demo.jpg](./demo/demo-4-departure/demo.jpg), into the departurecamera container.
 - Start by creating a connection. Create a Blob service SAS URL in the Storage Account in Azure, and format it as <https://storageAccountName.blob.core.windows.net/departurecamera?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2022-11-16T22:39:52Z&st=2020-11-16T14:39:52Z&spr=https&sig=QU%2F%sjsbnsjbndejbd%2Bj13ElAaTa1F6MWIYH8%3D>. Notice that we need to add the name of the departurecamera container.
 - Create a new project using the connection we just created. Set the Form Recognizer service URI to <https://your-region.api.cognitive.microsoft.com/>. The API key can be found on the Form Recognizer resource in the [Azure portal](https://portal.azure.com).
-- To train the model, start by uploading all images from [demo-4-departure](./demo/demo-4-departure), except [demo.jpg](./demo/demo-4-departure/demo.jpg), into the departurecamera container.
 - Next, add the following labels and select them on each of the images.
   - Ship
   - Reason
@@ -96,7 +96,7 @@ In this session, you will see learn we can get data from the real world, and use
   - Date
   - Signature
 - After labeling the different fields, go to the Train blade and train the model.
-- After training your model, check if you can list them using [form-recognizer.rest](./code/iac/rest-calls/form-recognizer.rest). If you don't see your model, you will probably need to update the version (currently set to v2.1-preview.1) to the latest version. In this case, you will also need to update the version in [RetrieveLatestModel.cs](./code/functions/retrieve-latest-model/RetrieveLatestModel.cs).
+- After training your model, check if you can list them using [form-recognizer.rest](./code/iac/rest-calls/form-recognizer.rest). If you don't see your model, you will probably need to update the version (currently set to v2.1-preview.2) to the latest version. In this case, you will also need to update the version in [RetrieveLatestModel.cs](./code/functions/retrieve-latest-model/RetrieveLatestModel.cs).
 
 ### Face API
 
