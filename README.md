@@ -8,8 +8,8 @@ In this session, you will see learn we can get data from the real world, and use
 
 - Update all values in the [parameters file](./code/azuredeploy.parameters.json) according to your own environment.
 - Make sure to update the organization in the _commonDataService_ parameter according to your CRM organization.
-- Make sure the Entities / Tables and their corresponding Fields / Columns specified in the _commonDataService_ parameter are created in your CDS environment.
-- Make sure at least one Ship entry is created with a _shipname_ set to **Somtrans LNG**.
+- Make sure the Entities / Tables and their corresponding Fields / Columns specified in the _commonDataService_ parameter are created in your [Data Verse environment](https://make.powerapps.com/environments/Default-f9c0f505-29be-470f-a3d0-3ebd6d384475/entities).
+- Make sure at least one Ship entry is created with a _shipname_ set to [**Somtrans LNG**](https://org0b8d6c3a.crm4.dynamics.com/main.aspx?appid=b97be26c-c1d3-ea11-a813-000d3a2c8f71&cmdbar=true&forceUCI=1&navbar=on&newWindow=true&pagetype=entityrecord&etn=cr9d6_ship&id=b751dec2-af28-eb11-a813-000d3aa86129).
 
 ## Deployment
 
