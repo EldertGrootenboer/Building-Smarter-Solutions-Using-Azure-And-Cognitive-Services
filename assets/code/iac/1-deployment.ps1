@@ -7,7 +7,7 @@ $subscriptionName = "Visual Studio Enterprise"
 $resourceGroupName = "rg-building-smarter-solutions-using-cognitive-services"
 $servicePrincipalName = "sp-building-smarter-solutions-using-cognitive-services"
 $administratorEmail = "me@eldert.net"
-$basePath = "C:\Users\elder\OneDrive\Sessions\Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"
+$basePath = "/home/codespace/workspace/Building-Smarter-Solutions-Using-Azure-And-Cognitive-Services"
 
 # Login to Azure
 Get-AzSubscription -SubscriptionName $subscriptionName | Set-AzContext
@@ -48,14 +48,14 @@ New-AzResourceGroupDeployment -Name "BuildSmarterSolutions1" -ResourceGroupName 
 dotnet publish "$basePath\assets\code\functions\license-plate-recognizer\LicensePlateRecognizer.csproj" -c Release -o "$basePath\assets\code\functions\license-plate-recognizer\publish"
 Compress-Archive -Path "$basePath\assets\code\functions\license-plate-recognizer\publish\*" -DestinationPath "$basePath\assets\code\functions\license-plate-recognizer\Deployment.zip"
 $functionApp = Get-AzResource -ResourceGroupName $resourceGroupName -Name fa-license-plate-recognizer-*
-Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath\assets\code\functions\license-plate-recognizer\Deployment.zip" -Force
+Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath/assets/code/functions/license-plate-recognizer/Deployment.zip" -Force
 Remove-Item "$basePath\assets\code\functions\license-plate-recognizer\Deployment.zip"
 
 # Deploy the Retrieve Latest Model Function
 dotnet publish "$basePath\assets\code\functions\retrieve-latest-model\RetrieveLatestModel.csproj" -c Release -o "$basePath\assets\code\functions\retrieve-latest-model\publish"
 Compress-Archive -Path "$basePath\assets\code\functions\retrieve-latest-model\publish\*" -DestinationPath "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip"
 $functionApp = Get-AzResource -ResourceGroupName $resourceGroupName -Name fa-retrieve-latest-model-*
-Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip" -Force
+Publish-AzWebapp -ResourceGroupName $resourceGroupName -Name $functionApp.Name -ArchivePath "$basePath/assets/code/functions/retrieve-latest-model/Deployment.zip" -Force
 Remove-Item "$basePath\assets\code\functions\retrieve-latest-model\Deployment.zip"
 
 # Deploy second group of resources

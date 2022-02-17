@@ -8,8 +8,8 @@ In this session, you will see learn we can get data from the real world, and use
 
 - Update all values in the [parameters file](./code/azuredeploy.parameters.json) according to your own environment.
 - Make sure to update the organization in the _commonDataService_ parameter according to your CRM organization.
-- Make sure the Entities / Tables and their corresponding Fields / Columns specified in the _commonDataService_ parameter are created in your CDS environment.
-- Make sure at least one Ship entry is created with a _shipname_ set to **Somtrans LNG**.
+- Make sure the Entities / Tables and their corresponding Fields / Columns specified in the _commonDataService_ parameter are created in your [Data Verse environment](https://make.powerapps.com/environments/Default-f9c0f505-29be-470f-a3d0-3ebd6d384475/entities).
+- Make sure at least one Ship entry is created with a _shipname_ set to [**Somtrans LNG**](https://org0b8d6c3a.crm4.dynamics.com/main.aspx?appid=b97be26c-c1d3-ea11-a813-000d3a2c8f71&cmdbar=true&forceUCI=1&navbar=on&newWindow=true&pagetype=entityrecord&etn=cr9d6_ship&id=b751dec2-af28-eb11-a813-000d3aa86129).
 
 ## Deployment
 
@@ -86,9 +86,9 @@ In this session, you will see learn we can get data from the real world, and use
 ### Train Form Recognizer API
 
 - To train the Form Recognizer API we use the [Form OCR Testing Tool](https://fott-preview.azurewebsites.net/).
+- Start by uploading all images from [demo-4-departure](./demo/demo-4-departure), except [demo.jpg](./demo/demo-4-departure/demo.jpg), into the departurecamera container.
 - Start by creating a connection. Create a Blob service SAS URL in the Storage Account in Azure, and format it as <https://storageAccountName.blob.core.windows.net/departurecamera?sv=2019-12-12&ss=bfqt&srt=sco&sp=rwdlacupx&se=2022-11-16T22:39:52Z&st=2020-11-16T14:39:52Z&spr=https&sig=QU%2F%sjsbnsjbndejbd%2Bj13ElAaTa1F6MWIYH8%3D>. Notice that we need to add the name of the departurecamera container.
 - Create a new project using the connection we just created. Set the Form Recognizer service URI to <https://your-region.api.cognitive.microsoft.com/>. The API key can be found on the Form Recognizer resource in the [Azure portal](https://portal.azure.com).
-- To train the model, start by uploading all images from [demo-4-departure](./demo/demo-4-departure), except [demo.jpg](./demo/demo-4-departure/demo.jpg), into the departurecamera container.
 - Next, add the following labels and select them on each of the images.
   - Ship
   - Reason
