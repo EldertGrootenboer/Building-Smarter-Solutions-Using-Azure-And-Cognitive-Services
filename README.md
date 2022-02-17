@@ -96,7 +96,7 @@ In this session, you will see learn we can get data from the real world, and use
   - Date
   - Signature
 - After labeling the different fields, go to the Train blade and train the model.
-- After training your model, check if you can list them using [form-recognizer.rest](./code/iac/rest-calls/form-recognizer.rest). If you don't see your model, you will probably need to update the version (currently set to v2.1-preview.1) to the latest version. In this case, you will also need to update the version in [RetrieveLatestModel.cs](./code/functions/retrieve-latest-model/RetrieveLatestModel.cs).
+- After training your model, check if you can list them using [form-recognizer.rest](./code/iac/rest-calls/form-recognizer.rest). If you don't see your model, you will probably need to update the version (currently set to v2.1-preview.3) to the latest version. In this case, you will also need to update the version in [RetrieveLatestModel.cs](./code/functions/retrieve-latest-model/RetrieveLatestModel.cs) and the Form Recognizer API in API Management.
 
 ### Face API
 

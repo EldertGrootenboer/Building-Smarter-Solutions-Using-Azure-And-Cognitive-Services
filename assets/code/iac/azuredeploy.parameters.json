@@ -38,7 +38,7 @@
                                     "urlTemplate": "/custom/models"
                                 }
                             },
-                            "serviceUrl": "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1"
+                            "serviceUrl": "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3"
                         },
                         "rdw": {
                             "displayName": "RDW",

@@ -1,4 +1,4 @@
-@apiUrl = westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1
+@apiUrl = westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3
 
 ### List models
 GET https://{{apiUrl}}/custom/models?op=full

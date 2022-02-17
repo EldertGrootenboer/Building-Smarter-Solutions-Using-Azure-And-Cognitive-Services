@@ -37,7 +37,7 @@ namespace EPH.Functions
 
             var hasMore = true;
             List<Model> models = new List<Model>();
-            var url = "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.1/custom/models?op=full";
+            var url = "https://westeurope.api.cognitive.microsoft.com/formrecognizer/v2.1-preview.3/custom/models?op=full";
 
             while (hasMore)
             {
